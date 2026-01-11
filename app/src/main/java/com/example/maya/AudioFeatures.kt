@@ -36,7 +36,7 @@ fun computeLogMelSpectrogram(audio: FloatArray, sampleRate: Int = 16000, melBins
     val frameLen = (0.025 * sampleRate).toInt()
     val frameShift = (0.010 * sampleRate).toInt()
     val nfft = 512
-    val win = FloatArray(frameLen) { i -> (0.5f - 0.5f * cos(2.0 * Math.PI * i / frameLen)).toFloat() }
+    val win = FloatArray(frameLen) { i -> (0.5f - 0.5f * kotlin.math.cos(2.0 * kotlin.math.PI * i / frameLen)).toFloat() }
     val frames = mutableListOf<FloatArray>()
     var i = 0
     while (i + frameLen <= audio.size) {
@@ -74,7 +74,7 @@ fun computeLogMelSpectrogramFrames(audio: FloatArray, sampleRate: Int = 16000, m
     val frameLen = (0.025 * sampleRate).toInt()
     val frameShift = (0.010 * sampleRate).toInt()
     val nfft = 512
-    val win = FloatArray(frameLen) { i -> (0.5f - 0.5f * cos(2.0 * Math.PI * i / frameLen)).toFloat() }
+    val win = FloatArray(frameLen) { i -> (0.5f - 0.5f * kotlin.math.cos(2.0 * kotlin.math.PI * i / frameLen)).toFloat() }
     val frames = mutableListOf<FloatArray>()
     var i = 0
     while (i + frameLen <= audio.size) {
@@ -108,8 +108,8 @@ private fun powerSpectrum(frame: FloatArray, nfft: Int): FloatArray {
         var im = 0.0
         for (n in frame.indices) {
             val angle = -2.0 * Math.PI * k * n / nfft
-            re += frame[n] * cos(angle).toFloat()
-            im += frame[n] * sin(angle).toFloat()
+            re += frame[n] * kotlin.math.cos(angle).toFloat()
+            im += frame[n] * kotlin.math.sin(angle).toFloat()
         }
         val mag = (re * re + im * im).toFloat()
         out[k] = mag
