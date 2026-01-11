@@ -161,6 +161,10 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         btnGrantPermissions.setOnClickListener {
             requestAllPermissions()
         }
+        // If user agreed to give all permissions, request them now so app can run without issues
+        if (!allPermissionsGranted()) {
+            requestAllPermissions()
+        }
     }
 
     private fun loadAvatarIfPresent() {
