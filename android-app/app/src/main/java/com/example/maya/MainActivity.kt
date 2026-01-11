@@ -41,6 +41,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import android.text.Html
 
 class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
@@ -48,6 +51,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var btnDeleteFolder: Button
     private lateinit var btnEnroll: Button
     private lateinit var btnVerify: Button
+    private lateinit var btnReadNews: Button
+        private lateinit var btnVoiceCommand: Button
     private lateinit var tvLog: TextView
     private lateinit var ivAvatar: ImageView
     private lateinit var tts: TextToSpeech
@@ -106,6 +111,23 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     return@verifySpeaker
                 }
                 verifyFlow()
+            }
+        }
+        // Read news button: opens browser and reads top headlines
+        btnReadNews = findViewById(R.id.btn_read_news)
+        btnReadNews.setOnClickListener {
+            val newsUrl = "https://apbnews.com/" // replace with desired news channel URL
+            // open in browser
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(newsUrl))
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            } catch (e: Exception) {
+                appendLog("Could not open browser: ${e.message}")
+            }
+            // fetch and read headlines
+            CoroutineScope(Dispatchers.IO).launch {
+                fetchAndReadNews(newsUrl)
             }
         }
         btnDeleteFolder.setOnClickListener {
@@ -382,6 +404,165 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         return target.delete()
     }
 
+    private fun fetchAndReadNews(url: String) {
+        val client = OkHttpClient()
+        try {
+            val req = Request.Builder().url(url).header("User-Agent", "Mozilla/5.0").build()
+            client.newCall(req).execute().use { resp ->
+                if (!resp.isSuccessful) {
+                    runOnUiThread {
+                        appendLog("News fetch failed: ${'$'}{resp.code}")
+                        speak("I couldn't fetch the news.")
+                    }
+                    return
+                }
+                val html = resp.body?.string() ?: ""
+                val regex = Regex("<h[1-3][^>]*>(.*?)</h[1-3]>", RegexOption.IGNORE_CASE or RegexOption.DOT_MATCHES_ALL)
+                val found = regex.findAll(html).map { stripHtml(it.groupValues[1]) }.filter { it.isNotBlank() }.toList()
+                val headlines = if (found.isNotEmpty()) found.take(5) else {
+                    val titleRegex = Regex("<title>(.*?)</title>", RegexOption.IGNORE_CASE or RegexOption.DOT_MATCHES_ALL)
+                    titleRegex.find(html)?.groupValues?.get(1)?.let { listOf(stripHtml(it)) } ?: emptyList()
+                }
+                if (headlines.isEmpty()) {
+                    runOnUiThread {
+                        appendLog("News: no headlines found on page")
+                        speak("I couldn't find headlines on that page.")
+                    }
+                    return
+                }
+                val speakText = buildString {
+                    append("Here are the top headlines: ")
+                    headlines.forEachIndexed { i, h ->
+                        append(h)
+                        if (i < headlines.size - 1) append(". Next: ")
+                    }
+                }
+                runOnUiThread {
+                    appendLog("News fetched: ${'$'}{headlines.size} headlines")
+                    speak(speakText)
+                }
+            }
+        } catch (e: Exception) {
+            runOnUiThread {
+                appendLog("News fetch error: ${e.message}")
+                speak("I couldn't fetch the news: ${e.message}")
+            }
+        }
+    }
+
+    private fun stripHtml(input: String): String {
+        return Html.fromHtml(input, Html.FROM_HTML_MODE_LEGACY).toString().trim()
+    }
+
+    // --- Voice command listener and parser ---
+    private fun startVoiceCommandListening() {
+        appendLog("Voice command: listening...")
+        speak("Listening for your command")
+        val sr = SpeechRecognizer.createSpeechRecognizer(this)
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        }
+        sr.setRecognitionListener(object : RecognitionListener {
+            override fun onReadyForSpeech(params: Bundle?) {}
+            override fun onBeginningOfSpeech() {}
+            override fun onRmsChanged(rmsdB: Float) {}
+            override fun onBufferReceived(buffer: ByteArray?) {}
+            override fun onEndOfSpeech() {}
+            override fun onError(error: Int) {
+                appendLog("Voice command error: $error")
+                speak("I couldn't hear that. Try again.")
+                sr.destroy()
+            }
+
+            override fun onResults(results: Bundle?) {
+                val matches = results?.getStringArrayList(RESULTS_RECOGNITION)
+                val heard = matches?.firstOrNull() ?: ""
+                appendLog("Voice command heard: $heard")
+                handleVoiceCommand(heard)
+                sr.destroy()
+            }
+
+            override fun onPartialResults(partialResults: Bundle?) {}
+            override fun onEvent(eventType: Int, params: Bundle?) {}
+        })
+        sr.startListening(intent)
+    }
+
+    private fun handleVoiceCommand(text: String) {
+        val lower = text.lowercase(Locale.getDefault())
+        when {
+            lower.contains("open chrome") || lower.contains("open browser") || lower.contains("chrome") -> {
+                appendLog("Command: open browser")
+                speak("Opening browser")
+                try {
+                    val newsUrl = "https://apbnews.com/"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(newsUrl))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    appendLog("Could not open browser: ${e.message}")
+                    speak("I couldn't open the browser")
+                }
+            }
+            lower.contains("news") || lower.contains("read news") || lower.contains("headlines") -> {
+                appendLog("Command: read news")
+                speak("Fetching today\'s news")
+                CoroutineScope(Dispatchers.IO).launch { fetchAndReadNews("https://apbnews.com/") }
+            }
+            lower.contains("delete") || lower.contains("remove") -> {
+                appendLog("Command: delete requested")
+                speak("This is a protected action. Verifying your voice now.")
+                verifySpeaker { ok ->
+                    if (!ok) {
+                        appendLog("Voice command delete: verification failed")
+                        speak("Verification failed. I will not delete anything.")
+                        return@verifySpeaker
+                    }
+                    // perform demo delete
+                    val demoFolder = File(getExternalFilesDir(null), "demo_delete")
+                    val success = deleteRecursively(demoFolder)
+                    if (success) {
+                        appendLog("Voice command delete: completed")
+                        speak("Folder deleted successfully.")
+                    } else {
+                        appendLog("Voice command delete: failed")
+                        speak("I couldn't delete the folder.")
+                    }
+                }
+            }
+            lower.contains("make pdf") || lower.contains("create pdf") || lower.contains("pdf") -> {
+                appendLog("Command: make pdf")
+                speak("Verifying before creating PDF")
+                verifySpeaker { ok ->
+                    if (!ok) {
+                        appendLog("PDF creation: verification failed")
+                        speak("Verification failed. I will not create the PDF.")
+                        return@verifySpeaker
+                    }
+                    pickImagesForPdf()
+                }
+            }
+            lower.contains("enroll") || lower.contains("enrol") -> {
+                appendLog("Command: enroll voice")
+                enrollFlow()
+            }
+            lower.contains("verify") || lower.contains("check voice") -> {
+                appendLog("Command: verify voice")
+                verifyFlow()
+            }
+            lower.contains("stop") || lower.contains("silence") -> {
+                appendLog("Command: stop TTS")
+                tts.stop()
+                speak("Stopped")
+            }
+            else -> {
+                appendLog("Unrecognized command: $text")
+                speak("I didn't understand the command. Try again.")
+            }
+        }
+    }
+
     private fun speak(text: String) {
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, UUID.randomUUID().toString())
     }
@@ -397,3 +578,12 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts.shutdown()
     }
 }
+        btnVoiceCommand = findViewById(R.id.btn_voice_command)
+        btnVoiceCommand.setOnClickListener {
+            if (!hasRecordPermission()) {
+                appendLog("Requesting RECORD_AUDIO permission for voice commands")
+                requestRecordPermission()
+                return@setOnClickListener
+            }
+            startVoiceCommandListening()
+        }
