@@ -19,9 +19,13 @@ object TTSHelper {
         val json = "{\"text\": \"${escapeJson(text)}\", \"lang\": \"$lang\" }"
         val body = RequestBody.create("application/json; charset=utf-8".toMediaType(), json)
         val request = Request.Builder().url(serverUrl).post(body).build()
-        client.newCall(request).execute().use { resp ->
-            if (resp.isSuccessful) return resp.body?.bytes()
-            return null
+        return try {
+            client.newCall(request).execute().use { resp ->
+                if (resp.isSuccessful) resp.body?.bytes()
+                else null
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 

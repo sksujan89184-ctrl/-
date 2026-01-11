@@ -42,8 +42,20 @@ class SpeakerVerifier(private val context: Context) {
 
     fun verify(templateId: String, audioSamples: FloatArray): Boolean {
         val stored = prefs.getString("embed_$templateId", null) ?: return false
-        val storedBytes = android.util.Base64.decode(stored, android.util.Base64.NO_WRAP)
-        val score = calculateCosineSimilarity(byteToFloat(storedBytes), runInference(audioSamples))
+        val storedBytes = try {
+            android.util.Base64.decode(stored, android.util.Base64.NO_WRAP)
+        } catch (e: Exception) {
+            Log.e("SpeakerVerifier", "Base64 decode failed: ${e.message}")
+            return false
+        }
+        val storedEmbedding = try {
+            byteToFloat(storedBytes)
+        } catch (e: Exception) {
+            Log.e("SpeakerVerifier", "Byte to float conversion failed: ${e.message}")
+            return false
+        }
+        val currentEmbedding = runInference(audioSamples)
+        val score = calculateCosineSimilarity(storedEmbedding, currentEmbedding)
         return score >= 0.75f // থ্রেশহোল্ড
     }
 
