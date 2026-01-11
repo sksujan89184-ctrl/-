@@ -4,131 +4,102 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#0F0F1E"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/iv_avatar"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:contentDescription="Assistant avatar"
-        android:scaleType="centerCrop"
+    <!-- Futuristic Background Decoration -->
+    <View
+        android:id="@+id/bg_glow"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:background="@drawable/neon_glow_circle"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginTop="-100dp"
+        android:layout_marginEnd="-100dp" />
 
-    <Button
-        android:id="@+id/btn_make_pdf"
-        android:layout_width="0dp"
+    <!-- Anime Avatar Placeholder -->
+    <ImageView
+        android:id="@+id/iv_maya_avatar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:src="@drawable/myra_placeholder"
+        android:scaleType="fitCenter"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_card"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Glassmorphism Bottom Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bottom_card"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Make a PDF from these photos"
-        app:layout_constraintTop_toBottomOf="@id/iv_avatar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+        app:cardCornerRadius="24dp"
+        app:cardElevation="0dp"
+        android:layout_margin="16dp"
+        app:cardBackgroundColor="#22FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <Button
-        android:id="@+id/btn_load_avatar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Load Avatar from URL"
-        app:layout_constraintTop_toBottomOf="@id/btn_make_pdf"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <Button
-        android:id="@+id/btn_delete_folder"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Delete folder (voice confirm)"
-        app:layout_constraintTop_toBottomOf="@id/btn_make_pdf"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Maya: Hello! How can I help you today?"
+                android:textColor="#E0E0FF"
+                android:textSize="16sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="12dp" />
 
-    <Button
-        android:id="@+id/btn_enroll"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Enroll Voice"
-        app:layout_constraintTop_toBottomOf="@id/btn_delete_folder"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-    <Button
-        android:id="@+id/btn_verify"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Verify Voice"
-        app:layout_constraintTop_toBottomOf="@id/btn_enroll"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+                <EditText
+                    android:id="@+id/et_input"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/glass_input_bg"
+                    android:hint="Talk to Maya..."
+                    android:textColorHint="#99E0E0FF"
+                    android:textColor="#FFFFFF"
+                    android:paddingHorizontal="16dp"
+                    android:imeOptions="actionSend"
+                    android:inputType="text" />
 
-    <Button
-        android:id="@+id/btn_read_news"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Open News &amp; Read Aloud"
-        app:layout_constraintTop_toBottomOf="@id/btn_verify"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+                <ImageButton
+                    android:id="@+id/btn_voice"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/neon_mic_bg"
+                    android:src="@android:drawable/ic_btn_speak_now"
+                    app:tint="#FFFFFF" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/btn_voice_command"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Voice Command"
-        app:layout_constraintTop_toBottomOf="@id/btn_read_news"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
-
-    <Button
-        android:id="@+id/btn_start_crew"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Start Crew Agents"
-        app:layout_constraintTop_toBottomOf="@id/btn_voice_command"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
-
-    <Button
-        android:id="@+id/btn_grant_permissions"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Grant Permissions"
-        app:layout_constraintTop_toBottomOf="@id/btn_start_crew"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
-
-    <Button
-        android:id="@+id/btn_enable_gf"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Enable GF Persona"
-        app:layout_constraintTop_toBottomOf="@id/btn_grant_permissions"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
-
+    <!-- Overlay Log -->
     <TextView
         android:id="@+id/tv_log"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="Live Action Log:\n"
-        android:padding="12dp"
-        android:background="#f2f2f2"
-        app:layout_constraintTop_toBottomOf="@id/btn_delete_folder"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="100dp"
+        android:layout_margin="16dp"
+        android:background="#44000000"
+        android:padding="8dp"
+        android:textColor="#00FFCC"
+        android:textSize="10sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
