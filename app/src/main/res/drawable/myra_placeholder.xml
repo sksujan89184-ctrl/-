@@ -17,6 +17,10 @@
         android:pathData="M44,58c0,0 4,6 12,6s12,-6 12,-6" 
         android:strokeWidth="2"
         android:strokeColor="#2C3E50"/>
-    <circle android:cx="46" android:cy="46" android:r="5" android:fillColor="#2C9FF7"/>
-    <circle android:cx="74" android:cy="46" android:r="5" android:fillColor="#2C9FF7"/>
+    <path
+        android:fillColor="#2C9FF7"
+        android:pathData="M46,41a5,5 0 1,1 0,10a5,5 0 1,1 0,-10z" />
+    <path
+        android:fillColor="#2C9FF7"
+        android:pathData="M74,41a5,5 0 1,1 0,10a5,5 0 1,1 0,-10z" />
 </vector>
