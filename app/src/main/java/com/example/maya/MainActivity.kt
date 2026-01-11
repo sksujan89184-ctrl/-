@@ -14,11 +14,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         tvLog = findViewById(R.id.tv_log)
-        val btnStart = findViewById<Button>(R.id.btn_start_crew)
+        
+        // সব বাটনের আইডি গুলো চেক করে সেফলি সেট করা
+        setupButton(R.id.btn_start_crew) { startMayaSystem() }
+        setupButton(R.id.btn_enroll) { tvLog.append("\nEnrollment clicked") }
+        setupButton(R.id.btn_verify) { tvLog.append("\nVerification clicked") }
+    }
 
-        btnStart.setOnClickListener {
-            startMayaSystem()
-        }
+    private fun setupButton(id: Int, action: () -> Unit) {
+        findViewById<Button>(id)?.setOnClickListener { action() }
     }
 
     private fun startMayaSystem() {
