@@ -108,6 +108,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="16dp" />
 
+    <Button
+        android:id="@+id/btn_enable_gf"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Enable GF Persona"
+        app:layout_constraintTop_toBottomOf="@id/btn_grant_permissions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
+
     <TextView
         android:id="@+id/tv_log"
         android:layout_width="0dp"

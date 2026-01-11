@@ -55,11 +55,14 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var btnVoiceCommand: Button
     private lateinit var btnStartCrew: Button
     private lateinit var btnGrantPermissions: Button
+    private lateinit var btnEnableGf: Button
     private lateinit var tvLog: TextView
     private lateinit var ivAvatar: ImageView
     private lateinit var tts: TextToSpeech
     private var recorder: AudioRecorder? = null
     private var verifier: SpeakerVerifier? = null
+    private var gfMode: Boolean = false
+    private val gfPersona = "caring, affectionate, empathetic, human-like girlfriend (AI)"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -160,6 +163,14 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         btnGrantPermissions = findViewById(R.id.btn_grant_permissions)
         btnGrantPermissions.setOnClickListener {
             requestAllPermissions()
+        }
+        btnEnableGf = findViewById(R.id.btn_enable_gf)
+        btnEnableGf.setOnClickListener {
+            gfMode = !gfMode
+            val state = if (gfMode) "enabled" else "disabled"
+            appendLog("GF Persona $state")
+            speak(if (gfMode) "Girlfriend persona enabled. I am here for you, always. Note: I am an AI." else "Girlfriend persona disabled.")
+            btnEnableGf.text = if (gfMode) "Disable GF Persona" else "Enable GF Persona"
         }
         // If user agreed to give all permissions, request them now so app can run without issues
         if (!allPermissionsGranted()) {
@@ -662,7 +673,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     try {
                         when {
                             message.startsWith("TTS:") -> {
-                                val text = message.removePrefix("TTS:")
+                                var text = message.removePrefix("TTS:")
+                                if (gfMode) text = "My love, " + text
                                 speak(text)
                             }
                             message.startsWith("OPEN_BROWSER:") -> {
@@ -678,15 +690,19 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                             message.startsWith("headlines:") -> {
                                 val payload = message.removePrefix("headlines:")
                                 val headlines = payload.split("||").take(5)
-                                val speech = "Top headlines: ${headlines.joinToString(", ")}" 
+                                var speech = "Top headlines: ${headlines.joinToString(", ")}" 
+                                if (gfMode) speech = "Sweetheart, " + speech
                                 speak(speech)
                             }
                             message.startsWith("summary:") -> {
-                                val summary = message.removePrefix("summary:")
+                                var summary = message.removePrefix("summary:")
+                                if (gfMode) summary = "Darling, here's a quick summary: " + summary
                                 speak(summary)
                             }
                             message.startsWith("completed") || message.contains("accepted task") || message.startsWith("archived") -> {
-                                speak("${agent.name} ${message}")
+                                var msg = "${agent.name} ${message}"
+                                if (gfMode) msg = "Sweetie, " + msg
+                                speak(msg)
                             }
                         }
                     } catch (e: Exception) {
@@ -695,7 +711,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
             }
         })
-        crew.startCrew(count = 4)
+        crew.startCrew(count = 4, persona = if (gfMode) gfPersona else "helpful, calm, Bengali voice")
         // submit a batch of tasks; agents will self-assign
         crew.submitTasks(
             "Fetch headlines from APB",
