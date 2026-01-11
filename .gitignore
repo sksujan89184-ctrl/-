@@ -1,0 +1,5 @@
+# Ignore common artifacts
+*.zip
+.DS_Store
+.idea/
+*.iml
