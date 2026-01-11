@@ -564,6 +564,35 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun handleVoiceCommand(text: String) {
         val lower = text.lowercase(Locale.getDefault())
+        // If user calls the assistant by name, respond affectionately
+        if (lower.contains("myra") && !lower.contains("read news") && !lower.contains("open") && !lower.contains("delete") ) {
+            appendLog("Called by name: $text")
+            val reply = if (gfMode) "Yes, jaan? I am here for you. How are you feeling today?" else "Yes? How can I help?"
+            speak(reply)
+            return
+        }
+
+        // Simple mood reply parsing: user may answer how they feel
+        if (lower.contains("i am") || lower.contains("i'm") || lower.startsWith("i ")) {
+            val positive = listOf("good", "fine", "well", "ok", "okay", "great", "happy")
+            val negative = listOf("sad", "not good", "depressed", "bad", "tired", "unwell", "terrible")
+            val isPos = positive.any { lower.contains(it) }
+            val isNeg = negative.any { lower.contains(it) }
+            when {
+                isPos -> {
+                    val msg = if (gfMode) "I am so happy to hear that, jaan. Tell me if you want to celebrate together." else "I'm glad to hear that."
+                    appendLog("User mood: positive")
+                    speak(msg)
+                    return
+                }
+                isNeg -> {
+                    val msg = if (gfMode) "Oh no, jaan. I'm sorry you're feeling like this. Do you want to talk about it?" else "I'm sorry to hear that. Do you want to talk about it?"
+                    appendLog("User mood: negative")
+                    speak(msg)
+                    return
+                }
+            }
+        }
         when {
             lower.contains("open chrome") || lower.contains("open browser") || lower.contains("chrome") -> {
                 appendLog("Command: open browser")
