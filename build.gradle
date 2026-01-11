@@ -9,9 +9,5 @@ buildscript {
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
+// allprojects { repositories { ... } } removed to avoid conflict with settings.gradle (dependencyResolutionManagement)
+
