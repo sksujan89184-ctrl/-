@@ -1,0 +1,18 @@
+workflows:
+  android-build:
+    name: Final Build Fix
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      java: 17
+    scripts:
+      - name: Locate and Build
+        script: | 
+          # এই কমান্ডটি gradlew ফাইলটি যেখানে আছে সেখানে চলে যাবে
+          cd $(dirname $(find . -name gradlew | head -1))
+          
+          # এখন পারমিশন দিয়ে বিল্ড শুরু করবে
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+    artifacts:
+      - "**/build/outputs/apk/debug/*.apk"
