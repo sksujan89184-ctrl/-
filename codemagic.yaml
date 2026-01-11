@@ -1,0 +1,21 @@
+workflows:
+  android-workflow:
+    name: AI Agent Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    scripts:
+      - name: Build Android App
+        script: |
+          # অ্যান্ড্রয়েড ফোল্ডারে ঢোকার চেষ্টা করবে, না থাকলে বর্তমান ফোল্ডারে থাকবে
+          [ -d "android" ] && cd android
+          
+          # যদি gradlew ফাইল না থাকে, তবে তা তৈরি করে নেবে
+          if [ ! -f "gradlew" ]; then
+            echo "Gradle wrapper not found, generating..."
+            gradle wrapper
+          fi
+          
+          chmod +x gradlew
+          ./gradlew assembleDebug
+    artifacts:
+      - "**/build/outputs/apk/debug/*.apk"
