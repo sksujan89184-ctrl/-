@@ -10,7 +10,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-
 import android.view.MotionEvent
 import android.os.CountDownTimer
 
@@ -24,7 +23,6 @@ class MainActivity : AppCompatActivity() {
     enum class MayaState { IDLE, THINKING, SPEAKING, HAPPY, SAD, EXCITED, SLEEP }
     
     private var sleepTimer: CountDownTimer? = null
-
     private lateinit var mayaMemory: MayaMemory
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +59,6 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        // Eye-tracking simulation: move avatar slightly towards touch
         window.decorView.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN) {
                 resetSleepTimer()
@@ -80,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun resetSleepTimer() {
         sleepTimer?.cancel()
-        sleepTimer = object : CountDownTimer(60000, 1000) { // 1 minute inactive
+        sleepTimer = object : CountDownTimer(60000, 1000) {
             override fun onTick(millisUntilFinished: Long) {}
             override fun onFinish() {
                 updateMayaState(MayaState.SLEEP)
@@ -92,7 +89,6 @@ class MainActivity : AppCompatActivity() {
         updateMayaState(MayaState.THINKING)
         tvStatus.text = "Maya: Thinking..."
         
-        // Emotion and Task Detection
         val emotion = detectEmotion(text)
         val task = detectTask(text)
         

@@ -121,7 +121,7 @@ private fun melFilterBank(nFilters: Int, nfft: Int, sampleRate: Int): Array<Floa
     val fMin = 0.0
     val fMax = sampleRate / 2.0
     fun hzToMel(f: Double) = 2595.0 * kotlin.math.log10(1.0 + f / 700.0)
-    fun melToHz(m: Double) = 700.0 * (10.0.pow(m / 2595.0) - 1.0)
+    fun melToHz(m: Double) = 700.0 * (kotlin.math.E.pow(m / 2595.0 * kotlin.math.ln(10.0)) - 1.0)
     val melMin = hzToMel(fMin)
     val melMax = hzToMel(fMax)
     val melPoints = DoubleArray(nFilters + 2) { i -> melMin + (melMax - melMin) * i / (nFilters + 1) }
