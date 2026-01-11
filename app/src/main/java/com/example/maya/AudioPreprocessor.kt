@@ -28,7 +28,7 @@ object AudioPreprocessor {
             for (m in 0 until nMels) {
                 var s = 0f
                 for (k in mag[i].indices) s += mag[i][k] * melFilter[m][k]
-                melSpec[i][m] = ln(1e-6f + max(0f, s))
+                melSpec[i][m] = ln(1e-6f + kotlin.math.max(0f, s))
             }
         }
         return melSpec
@@ -38,7 +38,7 @@ object AudioPreprocessor {
         val frames = mutableListOf<FloatArray>()
         var start = 0
         while (start + frameLen <= signal.size) {
-            frames.add(signal.copyOfRange(start, start + frameLen))
+            frames.add(signal.sliceArray(start until start + frameLen))
             start += hop
         }
         return frames.toTypedArray()
@@ -46,7 +46,7 @@ object AudioPreprocessor {
 
     private fun hamming(n: Int): FloatArray {
         val out = FloatArray(n)
-        for (i in 0 until n) out[i] = (0.54 - 0.46 * cos(2.0 * Math.PI * i / (n - 1))).toFloat()
+        for (i in 0 until n) out[i] = (0.54 - 0.46 * kotlin.math.cos(2.0 * Math.PI * i / (n - 1))).toFloat()
         return out
     }
 
@@ -60,8 +60,8 @@ object AudioPreprocessor {
             var im = 0.0
             for (t in 0 until n) {
                 val angle = 2.0 * Math.PI * k * t / n
-                re += frame[t] * cos(angle)
-                im -= frame[t] * sin(angle)
+                re += frame[t] * kotlin.math.cos(angle)
+                im -= frame[t] * kotlin.math.sin(angle)
             }
             out[k] = (re * re + im * im).toFloat()
         }
@@ -71,13 +71,13 @@ object AudioPreprocessor {
     private fun melFilterBank(nFft: Int, sampleRate: Int, nMels: Int): Array<FloatArray> {
         val fmin = 0.0
         val fmax = sampleRate / 2.0
-        fun hzToMel(hz: Double) = 2595.0 * ln10(hz / 700.0 + 1.0)
+        fun hzToMel(hz: Double) = 2595.0 * log10(hz / 700.0 + 1.0)
         fun melToHz(mel: Double) = 700.0 * (10.0.pow(mel / 2595.0) - 1.0)
         val melMin = hzToMel(fmin)
         val melMax = hzToMel(fmax)
         val mels = DoubleArray(nMels + 2) { i -> melMin + (melMax - melMin) * i / (nMels + 1) }
         val hz = DoubleArray(mels.size) { i -> melToHz(mels[i]) }
-        val bins = hz.map { floor((nFft + 1) * it / sampleRate).toInt() }
+        val bins = hz.map { kotlin.math.floor((nFft + 1) * it / sampleRate).toInt() }
         val filters = Array(nMels) { FloatArray(nFft / 2 + 1) }
         for (m in 1..nMels) {
             val f_m_minus = bins[m - 1]
@@ -95,6 +95,4 @@ object AudioPreprocessor {
         }
         return filters
     }
-
-    private fun ln10(x: Double): Double = ln(x)
 }
