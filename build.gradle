@@ -10,4 +10,3 @@ buildscript {
 }
 
 // allprojects { repositories { ... } } removed to avoid conflict with settings.gradle (dependencyResolutionManagement)
-
