@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    // এই লাইনটি অবশ্যই যোগ করতে হবে
+    namespace 'com.example.maya' 
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.example.maya"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "0.1"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    
+    // Kotlin এবং Java ভার্সন নিশ্চিত করার জন্য এটি যোগ করুন
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'org.tensorflow:tensorflow-lite:2.12.0'
+    implementation 'org.tensorflow:tensorflow-lite-support:0.4.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'androidx.security:security-crypto:1.1.0-alpha03'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    // এখানে শেষে ' চিহ্নটি ঠিক করে দেওয়া হয়েছে
+    implementation 'org.jsoup:jsoup:1.16.1' 
+}
