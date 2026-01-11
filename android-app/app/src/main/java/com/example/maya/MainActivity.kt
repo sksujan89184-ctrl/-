@@ -52,8 +52,9 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var btnEnroll: Button
     private lateinit var btnVerify: Button
     private lateinit var btnReadNews: Button
-        private lateinit var btnVoiceCommand: Button
-        private lateinit var btnStartCrew: Button
+    private lateinit var btnVoiceCommand: Button
+    private lateinit var btnStartCrew: Button
+    private lateinit var btnGrantPermissions: Button
     private lateinit var tvLog: TextView
     private lateinit var ivAvatar: ImageView
     private lateinit var tts: TextToSpeech
@@ -141,6 +142,24 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 }
                 requestDeleteFolderWithVoiceConfirm()
             }
+        }
+        // Wire remaining buttons
+        btnVoiceCommand = findViewById(R.id.btn_voice_command)
+        btnVoiceCommand.setOnClickListener {
+            if (!hasRecordPermission()) {
+                appendLog("Requesting RECORD_AUDIO permission for voice commands")
+                requestRecordPermission()
+                return@setOnClickListener
+            }
+            startVoiceCommandListening()
+        }
+        btnStartCrew = findViewById(R.id.btn_start_crew)
+        btnStartCrew.setOnClickListener {
+            startCrewDemo()
+        }
+        btnGrantPermissions = findViewById(R.id.btn_grant_permissions)
+        btnGrantPermissions.setOnClickListener {
+            requestAllPermissions()
         }
     }
 
@@ -250,7 +269,45 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        // no-op: flows will check permission again
+        if (requestCode == 1234) return
+        if (requestCode == REQUEST_ALL_PERMS_CODE) {
+            permissions.forEachIndexed { idx, perm ->
+                val granted = grantResults.getOrNull(idx) == PackageManager.PERMISSION_GRANTED
+                appendLog("Permission result: $perm = $granted")
+            }
+            val allOk = requiredPermissions().all { ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED }
+            if (allOk) speak("All required permissions granted.") else speak("Some permissions were denied. Open app settings to grant them.")
+        }
+    }
+
+    private fun requiredPermissions(): Array<String> {
+        val perms = mutableListOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            perms.add(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+        return perms.toTypedArray()
+    }
+
+    private fun allPermissionsGranted(): Boolean {
+        return requiredPermissions().all { ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED }
+    }
+
+    private fun requestAllPermissions() {
+        val missing = requiredPermissions().filter { ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED }
+        if (missing.isEmpty()) {
+            appendLog("All permissions already granted")
+            speak("All permissions are already granted.")
+            return
+        }
+        ActivityCompat.requestPermissions(this, missing.toTypedArray(), REQUEST_ALL_PERMS_CODE)
+    }
+
+    companion object {
+        private const val REQUEST_ALL_PERMS_CODE = 4321
     }
 
     private fun enrollFlow() {
