@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F0F1E"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tv_settings_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/label_avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Avatar Style"
+        android:textColor="#E0E0FF"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_settings_title"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinner_avatar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#33FFFFFF"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/label_avatar" />
+
+    <TextView
+        android:id="@+id/label_voice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Voice Tone"
+        android:textColor="#E0E0FF"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/spinner_avatar"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <SeekBar
+        android:id="@+id/seekbar_voice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/label_voice" />
+
+    <Switch
+        android:id="@+id/switch_theme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dark Mode"
+        android:textColor="#E0E0FF"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@id/seekbar_voice" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save &amp; Back"
+        android:backgroundTint="#7700E5FF"
+        android:layout_marginTop="48dp"
+        app:layout_constraintTop_toBottomOf="@id/switch_theme" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
