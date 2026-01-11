@@ -8,10 +8,8 @@ workflows:
     scripts:
       - name: Build Android App
         script: | 
-          # আপনার gradlew ফাইলটি খুঁজে বের করা
-          GRADLEW_DIR=$(dirname $(find . -name gradlew | head -1))
-          cd $GRADLEW_DIR
           chmod +x gradlew
-          ./gradlew clean assembleDebug --no-daemon --info
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
     artifacts:
       - "**/build/outputs/apk/debug/*.apk"
