@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
  * Simple orchestration: tasks are offered to agents via a Channel; agents pick
  * tasks and notify the listener as they progress.
  */
-class CrewManager(private val listener: CrewListener) {
+class CrewManager(private val context: android.content.Context, private val listener: CrewListener) {
     private val scope = CoroutineScope(Dispatchers.Default)
     private val taskChannel = Channel<String>(Channel.UNLIMITED)
     private val agents = mutableListOf<AgentRunner>()
@@ -19,7 +19,7 @@ class CrewManager(private val listener: CrewListener) {
         // create identical agents
         for (i in 1..count) {
             val agent = Agent(i, name, persona)
-            val runner = AgentRunner(agent, listener)
+            val runner = AgentRunner(agent, listener, context)
             agents += runner
             // each agent consumes tasks
             scope.launch {

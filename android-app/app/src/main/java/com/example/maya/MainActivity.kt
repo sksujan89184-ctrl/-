@@ -594,13 +594,42 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
 
     private fun startCrewDemo() {
-        val crew = com.example.maya.crew.CrewManager(object : com.example.maya.crew.CrewListener {
+        val crew = com.example.maya.crew.CrewManager(this@MainActivity, object : com.example.maya.crew.CrewListener {
             override fun onAgentLog(agent: com.example.maya.crew.Agent, message: String) {
                 runOnUiThread {
                     appendLog("[Agent ${agent.id}:${agent.name}] $message")
-                    // announce only major events to user
-                    if (message.startsWith("completed") || message.contains("accepted task")) {
-                        speak("${agent.name} ${message}")
+                    try {
+                        when {
+                            message.startsWith("TTS:") -> {
+                                val text = message.removePrefix("TTS:")
+                                speak(text)
+                            }
+                            message.startsWith("OPEN_BROWSER:") -> {
+                                val url = message.removePrefix("OPEN_BROWSER:")
+                                try {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    startActivity(intent)
+                                } catch (e: Exception) {
+                                    appendLog("Could not open browser: ${e.message}")
+                                }
+                            }
+                            message.startsWith("headlines:") -> {
+                                val payload = message.removePrefix("headlines:")
+                                val headlines = payload.split("||").take(5)
+                                val speech = "Top headlines: ${headlines.joinToString(", ")}" 
+                                speak(speech)
+                            }
+                            message.startsWith("summary:") -> {
+                                val summary = message.removePrefix("summary:")
+                                speak(summary)
+                            }
+                            message.startsWith("completed") || message.contains("accepted task") || message.startsWith("archived") -> {
+                                speak("${agent.name} ${message}")
+                            }
+                        }
+                    } catch (e: Exception) {
+                        appendLog("Agent log handler error: ${e.message}")
                     }
                 }
             }
