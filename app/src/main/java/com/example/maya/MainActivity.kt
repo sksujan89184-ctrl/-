@@ -25,10 +25,13 @@ class MainActivity : AppCompatActivity() {
     
     private var sleepTimer: CountDownTimer? = null
 
+    private lateinit var mayaMemory: MayaMemory
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        mayaMemory = MayaMemory(this)
         tvStatus = findViewById(R.id.tv_status)
         ivAvatar = findViewById(R.id.iv_maya_avatar)
         btnVoice = findViewById(R.id.btn_voice)
@@ -89,15 +92,57 @@ class MainActivity : AppCompatActivity() {
         updateMayaState(MayaState.THINKING)
         tvStatus.text = "Maya: Thinking..."
         
+        // Emotion and Task Detection
+        val emotion = detectEmotion(text)
+        val task = detectTask(text)
+        
         Handler(Looper.getMainLooper()).postDelayed({
-            when {
-                text.contains("love", true) -> updateMayaState(MayaState.EXCITED)
-                text.contains("sad", true) -> updateMayaState(MayaState.SAD)
-                else -> updateMayaState(MayaState.HAPPY)
-            }
-            tvStatus.text = "Maya: I understand! Let me help you with that."
+            val response = generateResponse(text, emotion, task)
+            tvStatus.text = response
+            mayaMemory.saveMessage(text, response)
+            
+            updateMayaStateFromEmotion(emotion)
             simulateLipSync()
-        }, 2000)
+        }, 1500)
+    }
+
+    private fun detectEmotion(text: String): String {
+        return when {
+            text.contains("happy", true) || text.contains("ভালো", true) -> "HAPPY"
+            text.contains("sad", true) || text.contains("খারাপ", true) -> "SAD"
+            text.contains("wow", true) || text.contains("অবাক", true) -> "EXCITED"
+            else -> "CALM"
+        }
+    }
+
+    private fun detectTask(text: String): String? {
+        return when {
+            text.contains("remind", true) || text.contains("মনে করিয়ে", true) -> "REMINDER"
+            text.contains("note", true) || text.contains("লিখে রাখো", true) -> "NOTE"
+            text.contains("plan", true) || text.contains("পরিকল্পনা", true) -> "PLAN"
+            else -> null
+        }
+    }
+
+    private fun generateResponse(text: String, emotion: String, task: String?): String {
+        val name = "Sweetheart"
+        if (task != null) return "Maya: Sure $name, I've noted your $task task."
+        
+        return when (emotion) {
+            "HAPPY" -> "Maya: I'm so glad to hear that, $name! 😊"
+            "SAD" -> "Maya: Don't be sad, $name. I'm here for you. ❤️"
+            "EXCITED" -> "Maya: Wow! That's amazing, $name! 🌟"
+            else -> "Maya: I hear you, $name. Tell me more."
+        }
+    }
+
+    private fun updateMayaStateFromEmotion(emotion: String) {
+        when (emotion) {
+            "HAPPY" -> updateMayaState(MayaState.HAPPY)
+            "SAD" -> updateMayaState(MayaState.SAD)
+            "EXCITED" -> updateMayaState(MayaState.EXCITED)
+            else -> updateMayaState(MayaState.IDLE)
+        }
     }
 
     private fun updateMayaState(state: MayaState) {
