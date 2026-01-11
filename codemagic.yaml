@@ -1,0 +1,17 @@
+workflows:
+  android-workflow:
+    name: Final App Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      java: 17
+    scripts:
+      - name: Build Android App
+        script: | 
+          # আপনার gradlew ফাইলটি খুঁজে বের করা
+          GRADLEW_DIR=$(dirname $(find . -name gradlew | head -1))
+          cd $GRADLEW_DIR
+          chmod +x gradlew
+          ./gradlew clean assembleDebug --no-daemon --info
+    artifacts:
+      - "**/build/outputs/apk/debug/*.apk"
