@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MayaAgentApp</string>
+    <string name="app_name">Maya AI Agent</string>
+    <string name="accessibility_description">Maya uses this to read screen content and help you navigate.</string>
+    <string name="device_admin_description">Maya needs this to control screen locking and power features.</string>
 </resources>
