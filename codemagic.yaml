@@ -1,0 +1,19 @@
+# সর্বজনীন এবং শক্তিশালী কনফিগারেশন
+workflows:
+  android-build:
+    name: Final Build Try
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      java: 17 # লেটেস্ট অ্যান্ড্রয়েড ভার্সনের জন্য এটি প্রয়োজন
+    scripts:
+      - name: Fix Permissions and Build
+        script: | 
+          # যদি আপনার সব ফাইল কোনো সাব-ফোল্ডারে থাকে তবে এখানে সেই ফোল্ডারের নাম দিন। 
+          # যেমন: cd MyProjectName (যদি সরাসরি থাকে তবে এই লাইন প্রয়োজন নেই)
+          
+          chmod +x gradlew
+          ./gradlew clean
+          ./gradlew assembleDebug --stacktrace --info --no-daemon
+    artifacts:
+      - "**/build/outputs/apk/debug/*.apk"
