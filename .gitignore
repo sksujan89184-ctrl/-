@@ -1,31 +1,9 @@
-# Ignore common artifacts
-*.zip
+/.gradle
+/build
+**/build
+/local.properties
+/*.keystore
+/*.jks
+/.idea
 .DS_Store
-.idea/
-*.iml
-
-# Java/Kotlin
-*.class
-*.jar
-*.war
-*.ear
-*.log
-hs_err_pid*
-
-# Gradle
-.gradle/
-build/
-!gradle-wrapper.jar
-!gradle-wrapper.properties
-
-# Android
-*.apk
-*.aab
-*.ap_
-*.dex
-local.properties
-
-# Temporary files
-*.tmp
-*.bak
-Thumbs.db
+**/*.iml

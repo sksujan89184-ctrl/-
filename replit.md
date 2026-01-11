@@ -12,22 +12,25 @@ This is a native Android application built with Kotlin and Gradle. The app appea
 
 ## Project Structure
 ```
-android-app/
-├── app/
-│   ├── src/main/
-│   │   ├── java/com/example/maya/
-│   │   │   ├── MainActivity.kt
-│   │   │   ├── AudioFeatures.kt
-│   │   │   ├── AudioPreprocessor.kt
-│   │   │   ├── AudioRecorder.kt
-│   │   │   ├── PersonaManager.kt
-│   │   │   ├── SpeakerVerifier.kt
-│   │   │   ├── TTSHelper.kt
-│   │   │   ├── WebhookHelper.kt
-│   │   │   └── crew/Agent.kt
-│   │   ├── res/
-│   │   └── AndroidManifest.xml
-│   └── build.gradle
+app/
+├── src/main/
+│   ├── java/com/example/maya/
+│   │   ├── MainActivity.kt
+│   │   ├── AudioFeatures.kt
+│   │   ├── AudioPreprocessor.kt
+│   │   ├── AudioRecorder.kt
+│   │   ├── PersonaManager.kt
+│   │   ├── SpeakerVerifier.kt
+│   │   ├── TTSHelper.kt
+│   │   ├── WebhookHelper.kt
+│   │   └── crew/Agent.kt
+│   ├── res/
+│   │   ├── layout/
+│   │   │   └── activity_main.xml
+│   │   ├── drawable/
+│   │   └── values/
+│   └── AndroidManifest.xml
+├── build.gradle
 ├── gradle/
 ├── scripts/
 ├── build.gradle
@@ -44,7 +47,7 @@ The Android SDK is required to build this app, which is not available in the sta
 
 1. **Android Studio (Recommended)**
    - Download from: https://developer.android.com/studio
-   - Open the `android-app` folder as a project
+   - Open the root folder as a project
    - Let Gradle sync and build
 
 2. **Codemagic CI/CD**
@@ -53,7 +56,6 @@ The Android SDK is required to build this app, which is not available in the sta
 
 3. **Command Line** (requires Android SDK)
    ```bash
-   cd android-app
    ./gradlew assembleDebug
    ```
 
@@ -65,4 +67,4 @@ The Android SDK is required to build this app, which is not available in the sta
 - Security Crypto 1.1.0-alpha06
 
 ## Recent Changes
-- 2026-01-11: Initial import and Replit environment setup
+- 2026-01-11: Reorganized project structure to standard Android Gradle pattern.
