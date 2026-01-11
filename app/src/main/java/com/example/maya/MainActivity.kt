@@ -168,21 +168,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun simulateLipSync() {
-        val handler = Handler(Looper.getMainLooper())
-        var count = 0
+        val lipSyncHandler = Handler(Looper.getMainLooper())
+        var lipSyncCount = 0
         val runnable = object : Runnable {
             override fun run() {
-                if (count < 10) {
-                    ivAvatar.scaleY = if (count % 2 == 0) 1.02f else 1.0f
-                    count++
-                    handler.postDelayed(this, 150)
+                if (lipSyncCount < 10) {
+                    ivAvatar.scaleY = if (lipSyncCount % 2 == 0) 1.02f else 1.0f
+                    lipSyncCount++
+                    lipSyncHandler.postDelayed(this, 150)
                 } else {
                     ivAvatar.scaleY = 1.0f
                     updateMayaState(MayaState.IDLE)
                 }
             }
         }
-        handler.post(runnable)
+        lipSyncHandler.post(runnable)
     }
 
     private fun startIdleAnimation() {
