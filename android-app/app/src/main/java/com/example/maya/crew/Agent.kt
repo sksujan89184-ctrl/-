@@ -4,6 +4,7 @@ import android.content.Context
 import kotlinx.coroutines.delay
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.jsoup.Jsoup
 
 data class Agent(val id: Int, val name: String, val persona: String)
 
@@ -27,8 +28,8 @@ class AgentRunner(private val agent: Agent, private val listener: CrewListener, 
                             listener.onAgentLog(agent, "fetch_failed:${resp.code}")
                         } else {
                             val html = resp.body?.string() ?: ""
-                            val regex = Regex("<h[1-3][^>]*>(.*?)</h[1-3]>", RegexOption.IGNORE_CASE or RegexOption.DOT_MATCHES_ALL)
-                            val found = regex.findAll(html).map { stripHtml(it.groupValues[1]) }.filter { it.isNotBlank() }.toList()
+                            val doc = Jsoup.parse(html)
+                            val found = doc.select("h1, h2, h3").map { it.text().trim() }.filter { it.isNotBlank() }
                             val headlines = if (found.isNotEmpty()) found.take(6) else listOf("No headlines found")
                             listener.onAgentLog(agent, "headlines:${headlines.joinToString("||")}")
                             listener.onAgentLog(agent, "completed:fetch")
@@ -42,9 +43,9 @@ class AgentRunner(private val agent: Agent, private val listener: CrewListener, 
                     val req = Request.Builder().url(url).header("User-Agent", "Mozilla/5.0").build()
                     client.newCall(req).execute().use { resp ->
                         val html = resp.body?.string() ?: ""
-                        val text = stripHtml(html).replace("\n+", " ")
-                        val sentences = text.split(Regex("(?<=[.!?])\\s+"))
-                        val summary = sentences.take(3).joinToString(" ")
+                        val doc = Jsoup.parse(html)
+                        val paragraphs = doc.select("p").map { it.text().trim() }.filter { it.isNotBlank() }
+                        val summary = if (paragraphs.isNotEmpty()) paragraphs.take(3).joinToString(" ") else stripHtml(doc.text()).split(Regex("(?<=[.!?])\\s+")) .take(3).joinToString(" ")
                         listener.onAgentLog(agent, "summary:$summary")
                         listener.onAgentLog(agent, "completed:summarize")
                     }
