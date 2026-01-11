@@ -13,7 +13,7 @@ object WebhookHelper {
     private val client = OkHttpClient()
 
     // এটি অবশ্যই কো-রুটিন (suspend) হতে হবে যাতে মেইন থ্রেড ব্লক না হয়
-    fun sendSignedCommand(url: String, jsonPayload: String, base64Key: String): Pair<Int, String?> {
+    suspend fun sendSignedCommand(url: String, jsonPayload: String, base64Key: String): Pair<Int, String?> {
         return try {
             // Decode key from base64
             val keyBytes = Base64.decode(base64Key, Base64.DEFAULT)

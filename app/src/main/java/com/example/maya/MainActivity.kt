@@ -1,5 +1,7 @@
 package com.example.maya
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -14,6 +16,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         tvLog = findViewById(R.id.tv_log)
+        
+        // Start wake word service
+        val wakeIntent = Intent(this, WakeWordService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(wakeIntent)
+        } else {
+            startService(wakeIntent)
+        }
         
         // সব বাটনের আইডি গুলো চেক করে সেফলি সেট করা
         setupButton(R.id.btn_start_crew) { startMayaSystem() }
