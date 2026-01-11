@@ -13,6 +13,15 @@ class PersonaManager(private val context: Context) {
         get() = prefs.getString("pet_name", "jaan") ?: "jaan"
         set(v) = prefs.edit().putString("pet_name", v).apply()
 
+    var aliases: List<String>
+        get() = prefs.getString("aliases", "myra,অনিমি,আর্জেটা")?.split(',')?.map { it.trim() } ?: listOf("myra")
+        set(v) = prefs.edit().putString("aliases", v.joinToString(",")).apply()
+
+    fun isCalledByName(lowerText: String): String? {
+        val lowered = lowerText.lowercase()
+        return aliases.firstOrNull { lowered.contains(it.lowercase()) }
+    }
+
     fun formatSpeech(text: String): String {
         return if (gfMode) {
             // gentle affectionate framing, but keep clarification

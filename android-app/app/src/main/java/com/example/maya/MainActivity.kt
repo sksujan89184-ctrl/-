@@ -581,10 +581,12 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun handleVoiceCommand(text: String) {
         val lower = text.lowercase(Locale.getDefault())
-        // If user calls the assistant by name, respond affectionately
-        if (lower.contains("myra") && !lower.contains("read news") && !lower.contains("open") && !lower.contains("delete") ) {
-            appendLog("Called by name: $text")
-            val reply = if (gfMode) "Yes, jaan? I am here for you. How are you feeling today?" else "Yes? How can I help?"
+        // If user calls the assistant by any configured alias, respond affectionately
+        val calledAlias = personaManager.isCalledByName(lower)
+        if (calledAlias != null && !lower.contains("read news") && !lower.contains("open") && !lower.contains("delete")) {
+            appendLog("Called by alias '$calledAlias': $text")
+            val pet = personaManager.userPetName
+            val reply = if (gfMode) "Yes, $pet? I am here for you. How are you feeling today?" else "Yes? How can I help?"
             speak(reply)
             return
         }
