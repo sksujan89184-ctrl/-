@@ -61,6 +61,28 @@
         android:layout_marginTop="32dp"
         app:layout_constraintTop_toBottomOf="@id/seekbar_voice" />
 
+    <TextView
+        android:id="@+id/label_character"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Character Personality"
+        android:textColor="#E0E0FF"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/switch_theme"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/rg_character"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/label_character">
+        <RadioButton android:text="Cute Maya" android:textColor="#FFFFFF" />
+        <RadioButton android:text="Serious Assistant" android:textColor="#FFFFFF" />
+        <RadioButton android:text="Gamer Maya" android:textColor="#FFFFFF" />
+    </RadioGroup>
+
     <Button
         android:id="@+id/btn_save"
         android:layout_width="match_parent"

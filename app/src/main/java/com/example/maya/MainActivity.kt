@@ -11,6 +11,9 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
+import android.view.MotionEvent
+import android.os.CountDownTimer
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var tvStatus: TextView
@@ -18,7 +21,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnVoice: ImageButton
     private lateinit var btnSettings: ImageButton
 
-    enum class MayaState { IDLE, THINKING, SPEAKING, HAPPY }
+    enum class MayaState { IDLE, THINKING, SPEAKING, HAPPY, SAD, EXCITED, SLEEP }
+    
+    private var sleepTimer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,18 +35,21 @@ class MainActivity : AppCompatActivity() {
         btnSettings = findViewById(R.id.btn_settings)
         
         startIdleAnimation()
+        resetSleepTimer()
 
         btnSettings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
         btnVoice.setOnClickListener {
+            resetSleepTimer()
             updateMayaState(MayaState.SPEAKING)
             tvStatus.text = "Maya: I'm listening, Sweetheart..."
             startPulseAnimation(btnVoice)
         }
 
         findViewById<EditText>(R.id.et_input).setOnEditorActionListener { v, _, _ ->
+            resetSleepTimer()
             val text = (v as EditText).text.toString()
             if (text.isNotBlank()) {
                 v.setText("")
@@ -49,6 +57,32 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+
+        // Eye-tracking simulation: move avatar slightly towards touch
+        window.decorView.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_MOVE || event.action == MotionEvent.ACTION_DOWN) {
+                resetSleepTimer()
+                val centerX = ivAvatar.x + ivAvatar.width / 2
+                val centerY = ivAvatar.y + ivAvatar.height / 2
+                val dx = (event.x - centerX) / 50f
+                val dy = (event.y - centerY) / 50f
+                ivAvatar.translationX = dx.coerceIn(-20f, 20f)
+                ivAvatar.translationY = dy.coerceIn(-20f, 20f)
+            } else if (event.action == MotionEvent.ACTION_UP) {
+                ivAvatar.animate().translationX(0f).translationY(0f).setDuration(200).start()
+            }
+            false
+        }
+    }
+
+    private fun resetSleepTimer() {
+        sleepTimer?.cancel()
+        sleepTimer = object : CountDownTimer(60000, 1000) { // 1 minute inactive
+            override fun onTick(millisUntilFinished: Long) {}
+            override fun onFinish() {
+                updateMayaState(MayaState.SLEEP)
+            }
+        }.start()
     }
 
     private fun handleUserInput(text: String) {
@@ -56,13 +90,18 @@ class MainActivity : AppCompatActivity() {
         tvStatus.text = "Maya: Thinking..."
         
         Handler(Looper.getMainLooper()).postDelayed({
-            updateMayaState(MayaState.HAPPY)
+            when {
+                text.contains("love", true) -> updateMayaState(MayaState.EXCITED)
+                text.contains("sad", true) -> updateMayaState(MayaState.SAD)
+                else -> updateMayaState(MayaState.HAPPY)
+            }
             tvStatus.text = "Maya: I understand! Let me help you with that."
             simulateLipSync()
         }, 2000)
     }
 
     private fun updateMayaState(state: MayaState) {
+        ivAvatar.clearAnimation()
         when (state) {
             MayaState.IDLE -> ivAvatar.alpha = 1.0f
             MayaState.THINKING -> {
@@ -73,6 +112,16 @@ class MainActivity : AppCompatActivity() {
             }
             MayaState.HAPPY -> {
                 ivAvatar.animate().scaleX(1.1f).scaleY(1.1f).setDuration(300).start()
+            }
+            MayaState.SAD -> {
+                ivAvatar.animate().alpha(0.7f).translationY(10f).setDuration(500).start()
+            }
+            MayaState.EXCITED -> {
+                ivAvatar.animate().scaleX(1.2f).scaleY(1.2f).rotation(5f).setDuration(300).start()
+            }
+            MayaState.SLEEP -> {
+                tvStatus.text = "Maya: Zzz..."
+                ivAvatar.animate().alpha(0.4f).scaleX(0.9f).scaleY(0.9f).setDuration(1000).start()
             }
         }
     }
