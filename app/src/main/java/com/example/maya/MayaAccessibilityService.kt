@@ -34,7 +34,7 @@ class MayaAccessibilityService : AccessibilityService() {
         Log.e("MayaAccess", "Service Interrupted")
     }
 
-    fun performGlobalAction(action: Int): Boolean {
+    fun triggerGlobalAction(action: Int): Boolean {
         return performGlobalAction(action)
     }
 }
