@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var btnVerify: Button
     private lateinit var btnReadNews: Button
         private lateinit var btnVoiceCommand: Button
+        private lateinit var btnStartCrew: Button
     private lateinit var tvLog: TextView
     private lateinit var ivAvatar: ImageView
     private lateinit var tts: TextToSpeech
@@ -587,3 +588,36 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
             startVoiceCommandListening()
         }
+        btnStartCrew = findViewById(R.id.btn_start_crew)
+        btnStartCrew.setOnClickListener {
+            startCrewDemo()
+        }
+
+    private fun startCrewDemo() {
+        val crew = com.example.maya.crew.CrewManager(object : com.example.maya.crew.CrewListener {
+            override fun onAgentLog(agent: com.example.maya.crew.Agent, message: String) {
+                runOnUiThread {
+                    appendLog("[Agent ${agent.id}:${agent.name}] $message")
+                    // announce only major events to user
+                    if (message.startsWith("completed") || message.contains("accepted task")) {
+                        speak("${agent.name} ${message}")
+                    }
+                }
+            }
+        })
+        crew.startCrew(count = 4)
+        // submit a batch of tasks; agents will self-assign
+        crew.submitTasks(
+            "Fetch headlines from APB",
+            "Summarize latest news",
+            "Prepare TTS audio",
+            "Open news channel in browser",
+            "Archive today's news",
+            "Cleanup temp files"
+        )
+        // stop crew after a delay
+        CoroutineScope(Dispatchers.Main).launch {
+            kotlinx.coroutines.delay(8000L)
+            crew.stop()
+        }
+    }
