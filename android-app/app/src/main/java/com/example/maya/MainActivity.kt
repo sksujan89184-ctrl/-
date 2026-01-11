@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var verifier: SpeakerVerifier? = null
     private var gfMode: Boolean = false
     private val gfPersona = "caring, affectionate, empathetic, human-like girlfriend (AI)"
+    private lateinit var personaManager: PersonaManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,6 +84,8 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         tts = TextToSpeech(this, this)
         verifier = SpeakerVerifier(this.applicationContext)
         recorder = AudioRecorder()
+        personaManager = PersonaManager(this)
+        gfMode = personaManager.gfMode
 
         btnMakePdf.setOnClickListener {
             appendLog("Verification: starting speaker verification...")
@@ -167,11 +170,14 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         btnEnableGf = findViewById(R.id.btn_enable_gf)
         btnEnableGf.setOnClickListener {
             gfMode = !gfMode
+            personaManager.gfMode = gfMode
             val state = if (gfMode) "enabled" else "disabled"
             appendLog("GF Persona $state")
             speak(if (gfMode) "Girlfriend persona enabled. I am here for you, always. Note: I am an AI." else "Girlfriend persona disabled.")
             btnEnableGf.text = if (gfMode) "Disable GF Persona" else "Enable GF Persona"
         }
+        // set initial label
+        btnEnableGf.text = if (gfMode) "Disable GF Persona" else "Enable GF Persona"
         // If user agreed to give all permissions, request them now so app can run without issues
         if (!allPermissionsGranted()) {
             requestAllPermissions()
@@ -527,6 +533,17 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         return Html.fromHtml(input, Html.FROM_HTML_MODE_LEGACY).toString().trim()
     }
 
+    private fun confirmAction(desc: String, onConfirm: () -> Unit) {
+        runOnUiThread {
+            AlertDialog.Builder(this)
+                .setTitle("Please confirm")
+                .setMessage("Do you want to $desc?")
+                .setPositiveButton("Yes") { _, _ -> onConfirm() }
+                .setNegativeButton("No", null)
+                .show()
+        }
+    }
+
     // --- Voice command listener and parser ---
     private fun startVoiceCommandListening() {
         appendLog("Voice command: listening...")
@@ -596,21 +613,25 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         when {
             lower.contains("open chrome") || lower.contains("open browser") || lower.contains("chrome") -> {
                 appendLog("Command: open browser")
-                speak("Opening browser")
-                try {
-                    val newsUrl = "https://apbnews.com/"
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(newsUrl))
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                } catch (e: Exception) {
-                    appendLog("Could not open browser: ${e.message}")
-                    speak("I couldn't open the browser")
+                confirmAction("open the browser to the news channel") {
+                    speak("Opening browser")
+                    try {
+                        val newsUrl = "https://apbnews.com/"
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(newsUrl))
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        appendLog("Could not open browser: ${e.message}")
+                        speak("I couldn't open the browser")
+                    }
                 }
             }
             lower.contains("news") || lower.contains("read news") || lower.contains("headlines") -> {
                 appendLog("Command: read news")
-                speak("Fetching today\'s news")
-                CoroutineScope(Dispatchers.IO).launch { fetchAndReadNews("https://apbnews.com/") }
+                confirmAction("read today's news") {
+                    speak("Fetching today's news")
+                    CoroutineScope(Dispatchers.IO).launch { fetchAndReadNews("https://apbnews.com/") }
+                }
             }
             lower.contains("delete") || lower.contains("remove") -> {
                 appendLog("Command: delete requested")
