@@ -33,9 +33,10 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     
     // Audio & Networking Libraries
-    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
     implementation 'org.jsoup:jsoup:1.15.4'
+    implementation 'org.json:json:20230227'
     
     // TFLite
     implementation 'org.tensorflow:tensorflow-lite:2.12.0'
