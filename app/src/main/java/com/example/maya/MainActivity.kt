@@ -44,9 +44,22 @@ class MainActivity : AppCompatActivity() {
     private var sleepTimer: CountDownTimer? = null
     private lateinit var mayaMemory: MayaMemory
 
+    private lateinit var sensorManager: android.hardware.SensorManager
+    private var shakeDetector: ShakeDetector? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as android.hardware.SensorManager
+        shakeDetector = ShakeDetector {
+            tvStatus.text = "Maya: Are you okay, Sweetheart? I felt a sudden movement!"
+            updateMayaState(MayaState.EXCITED)
+            // Trigger emergency webhook (simulated)
+            val distressLog = JSONObject().apply { put("action", "distress_shake_detected") }
+            WebhookHelper.sendAction("emergency_alert", distressLog) { _, _ -> }
+        }
+        sensorManager.registerListener(shakeDetector, sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER), android.hardware.SensorManager.SENSOR_DELAY_UI)
         
         checkAndRequestPermissions()
 
@@ -68,6 +81,13 @@ class MainActivity : AppCompatActivity() {
         
         // Proactive engagement on start
         tvStatus.text = "Maya: I'm here, Sweetheart. You look wonderful today!"
+        
+        // Random proactive notification simulation
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (tvStatus.text.contains("wonderful")) {
+                tvStatus.text = "Maya: By the way, remember to drink some water. Your health is my priority! ❤️"
+            }
+        }, 5000)
 
         btnSettings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
