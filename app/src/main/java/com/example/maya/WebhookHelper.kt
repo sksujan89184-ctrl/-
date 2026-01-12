@@ -12,30 +12,27 @@ import javax.crypto.spec.SecretKeySpec
 object WebhookHelper {
     private val client = OkHttpClient()
 
-    // এটি অবশ্যই কো-রুটিন (suspend) হতে হবে যাতে মেইন থ্রেড ব্লক না হয়
-    suspend fun sendSignedCommand(url: String, jsonPayload: String, base64Key: String): Pair<Int, String?> {
-        return try {
-            // Decode key from base64
-            val keyBytes = Base64.decode(base64Key, Base64.DEFAULT)
-            val hmac = hmacSha256(keyBytes, jsonPayload.toByteArray(Charsets.UTF_8))
-            val signature = ByteString.of(*hmac).hex()
+    fun sendAction(action: String, data: JSONObject, callback: (Boolean, String?) -> Unit) {
+        val json = JSONObject()
+        json.put("action", action)
+        json.put("payload", data)
+        json.put("timestamp", System.currentTimeMillis())
 
-            val body = RequestBody.create("application/json; charset=utf-8".toMediaType(), jsonPayload)
-            val request = Request.Builder()
-                .url(url)
-                .post(body)
-                .addHeader("X-Signature", signature)
-                .build()
+        val body = RequestBody.create("application/json; charset=utf-8".toMediaType(), json.toString())
+        val request = Request.Builder()
+            .url("https://your-backend-api.com/maya-webhook") // Replace with actual URL
+            .post(body)
+            .build()
 
-            // নেটওয়ার্ক কল
-            client.newCall(request).execute().use { resp ->
-                val respBody = resp.body?.string()
-                Pair(resp.code, respBody)
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                callback(false, e.message)
             }
-        } catch (e: Exception) {
-            // এরর হলে ০ এবং মেসেজ রিটার্ন করবে
-            Pair(0, e.message)
-        }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                callback(response.isSuccessful, response.body?.string())
+            }
+        })
     }
 
     private fun hmacSha256(key: ByteArray, data: ByteArray): ByteArray {
