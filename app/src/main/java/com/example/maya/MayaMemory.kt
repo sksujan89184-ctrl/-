@@ -35,6 +35,12 @@ class MayaMemory(context: Context) {
         val facts = getFacts()
         facts.add(fact)
         prefs.edit().putStringSet("user_facts", facts.toSet()).apply()
+        
+        // Sync to Supabase
+        val data = JSONObject()
+        data.put("fact", fact)
+        data.put("device_id", Build.MODEL)
+        WebhookHelper.sendToSupabase("user_facts", data)
     }
 
     fun getFacts(): MutableList<String> {
