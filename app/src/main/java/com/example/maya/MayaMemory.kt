@@ -27,6 +27,10 @@ class MayaMemory(context: Context) {
         return JSONArray(data)
     }
 
+    fun clear() {
+        prefs.edit().remove("chat_history").apply()
+    }
+
     fun getLastContext(): String {
         val history = getHistory()
         if (history.length() > 0) {

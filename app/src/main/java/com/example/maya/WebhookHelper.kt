@@ -28,10 +28,15 @@ object WebhookHelper {
 
         client.newCall(request).enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: java.io.IOException) {
+                // Handle offline or error by logging locally or retrying
+                android.util.Log.e("WebhookHelper", "Failed to send action: ${e.message}")
                 callback(false, e.message)
             }
 
             override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                if (!response.isSuccessful) {
+                    android.util.Log.e("WebhookHelper", "Server error: ${response.code}")
+                }
                 callback(response.isSuccessful, response.body?.string())
             }
         })
