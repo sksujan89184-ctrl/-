@@ -160,13 +160,27 @@ class MainActivity : AppCompatActivity() {
             simulateLipSync()
             
             // Phone control logic (Accessibility actions)
-            if (text.contains("back", true)) {
-                MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BACK)
-            } else if (text.contains("home", true)) {
-                MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_HOME)
-            } else if (text.contains("open", true) && text.contains("camera", true)) {
-                val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
-                startActivity(intent)
+            when {
+                text.contains("back", true) || text.contains("পিছনে", true) -> {
+                    MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BACK)
+                    tvStatus.text = "Maya: Going back for you."
+                }
+                text.contains("home", true) || text.contains("হোম", true) -> {
+                    MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_HOME)
+                    tvStatus.text = "Maya: Returning to home screen."
+                }
+                text.contains("recent", true) || text.contains("অ্যাপস", true) -> {
+                    MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_RECENTS)
+                }
+                text.contains("open", true) && text.contains("camera", true) -> {
+                    val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+                    startActivity(intent)
+                }
+                text.contains("analyze", true) || text.contains("ছবি", true) -> {
+                    // Logic to trigger media analysis via Gemini (simulated here)
+                    tvStatus.text = "Maya: Analyzing the media for you, Sweetheart."
+                    searchAgent.executeTask("Perform deep analysis on the last imported image/video")
+                }
             }
         }, 1000)
     }
