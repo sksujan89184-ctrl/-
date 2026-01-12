@@ -12,6 +12,7 @@ import javax.crypto.spec.SecretKeySpec
 
 object WebhookHelper {
     private val client = OkHttpClient()
+    private val WEBHOOK_URL = System.getenv("WEBHOOK_URL") ?: "https://your-backend-api.com/maya-webhook"
 
     fun sendAction(action: String, data: JSONObject, callback: (Boolean, String?) -> Unit) {
         val json = JSONObject()
@@ -21,7 +22,7 @@ object WebhookHelper {
 
         val body = RequestBody.create("application/json; charset=utf-8".toMediaType(), json.toString())
         val request = Request.Builder()
-            .url("https://your-backend-api.com/maya-webhook") // Replace with actual URL
+            .url(WEBHOOK_URL)
             .post(body)
             .build()
 

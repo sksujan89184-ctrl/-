@@ -59,6 +59,13 @@ class MainActivity : AppCompatActivity() {
         startIdleAnimation()
         resetSleepTimer()
 
+        // Send startup greeting to Webhook for Make.com verification
+        val greeting = JSONObject().apply {
+            put("message", "Hello! Maya AI is now active and connected to Make.com.")
+            put("device", Build.MODEL)
+        }
+        WebhookHelper.sendAction("startup_greeting", greeting) { _, _ -> }
+
         btnSettings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
@@ -125,8 +132,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleUserInput(text: String) {
+        resetSleepTimer()
         updateMayaState(MayaState.THINKING)
-        tvStatus.text = "Maya: Thinking..."
+        tvStatus.text = "Maya: thinking..."
         
         val emotion = detectEmotion(text)
         val task = detectTask(text)
@@ -137,7 +145,7 @@ class MainActivity : AppCompatActivity() {
             mayaMemory.saveMessage(text, response)
             
             // Execute Agent Task if needed
-            if (task != null || text.contains("search", true)) {
+            if (task != null || text.contains("search", true) || text.contains("analyze", true)) {
                 searchAgent.executeTask(text)
             }
 
@@ -146,13 +154,17 @@ class MainActivity : AppCompatActivity() {
             logData.put("user_input", text)
             logData.put("maya_response", response)
             logData.put("emotion", emotion)
-            WebhookHelper.sendAction("log_interaction", logData) { success, error ->
-                // Optional: Handle background logging status
-            }
+            WebhookHelper.sendAction("log_interaction", logData) { _, _ -> }
 
             updateMayaStateFromEmotion(emotion)
             simulateLipSync()
-        }, 1500)
+            
+            // Phone control logic (simplified example)
+            if (text.contains("open", true) && text.contains("camera", true)) {
+                val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+                startActivity(intent)
+            }
+        }, 1000)
     }
 
     private fun detectEmotion(text: String): String {
