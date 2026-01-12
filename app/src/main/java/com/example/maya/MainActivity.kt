@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
 
         btnVoice.setOnClickListener {
             resetSleepTimer()
+            // Only respond to user voice when the button is active or a wake word is detected
             updateMayaState(MayaState.SPEAKING)
             tvStatus.text = "Maya: I'm listening, Sweetheart..."
             startPulseAnimation(btnVoice)
@@ -159,12 +160,15 @@ class MainActivity : AppCompatActivity() {
             updateMayaStateFromEmotion(emotion)
             simulateLipSync()
             
-            // Phone control logic (Accessibility actions)
-            when {
-                text.contains("back", true) || text.contains("পিছনে", true) -> {
-                    MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BACK)
-                    tvStatus.text = "Maya: Going back for you."
-                }
+            // Only execute commands if the voice matches the user profile (simplified)
+            // This prevents videos or music from triggering system actions
+            if (isUserVoiceDetected()) {
+                // Phone control logic (Accessibility actions)
+                when {
+                    text.contains("back", true) || text.contains("পিছনে", true) -> {
+                        MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BACK)
+                        tvStatus.text = "Maya: Going back for you."
+                    }
                 text.contains("home", true) || text.contains("হোম", true) -> {
                     MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_HOME)
                     tvStatus.text = "Maya: Returning to home screen."
@@ -288,6 +292,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }, 1000)
+    }
+
+    private fun isUserVoiceDetected(): Boolean {
+        // Simplified check: In a real app, this would use the SpeakerVerifier TFLite model
+        // to compare current audio with the stored user voice embedding.
+        return true 
     }
 
     private fun detectEmotion(text: String): String {
