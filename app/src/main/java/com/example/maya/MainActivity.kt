@@ -216,6 +216,32 @@ class MainActivity : AppCompatActivity() {
                     startActivity(panelIntent)
                     tvStatus.text = "Maya: Opening WiFi settings for you."
                 }
+                text.contains("torch", true) || text.contains("flashlight", true) || text.contains("লাইট", true) -> {
+                    try {
+                        val cameraManager = getSystemService(android.content.Context.CAMERA_SERVICE) as android.hardware.camera2.CameraManager
+                        val cameraId = cameraManager.cameraIdList[0]
+                        val isTorchOn = text.contains("on", true) || text.contains("চালু", true)
+                        cameraManager.setTorchMode(cameraId, isTorchOn)
+                        tvStatus.text = if (isTorchOn) "Maya: Flashlight is now ON, Sweetheart." else "Maya: Flashlight is now OFF."
+                    } catch (e: Exception) {
+                        tvStatus.text = "Maya: I couldn't control the flashlight: ${e.message}"
+                    }
+                }
+                text.contains("volume", true) || text.contains("সাউন্ড", true) -> {
+                    val audioManager = getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
+                    if (text.contains("up", true) || text.contains("বাড়া", true)) {
+                        audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_MUSIC, android.media.AudioManager.ADJUST_RAISE, android.media.AudioManager.FLAG_SHOW_UI)
+                        tvStatus.text = "Maya: Increasing volume for you."
+                    } else if (text.contains("down", true) || text.contains("কমা", true)) {
+                        audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_MUSIC, android.media.AudioManager.ADJUST_LOWER, android.media.AudioManager.FLAG_SHOW_UI)
+                        tvStatus.text = "Maya: Decreasing volume for you."
+                    }
+                }
+                text.contains("brightness", true) || text.contains("ব্রাইটনেস", true) -> {
+                    val intent = Intent(android.provider.Settings.ACTION_DISPLAY_SETTINGS)
+                    startActivity(intent)
+                    tvStatus.text = "Maya: Opening display settings to adjust brightness."
+                }
             }
         }, 1000)
     }
