@@ -1,37 +1,21 @@
-package com.example.maya // 'Package' এর জায়গায় 'package' হবে
+package com.example.maya
 
-import android.content.Context
+import android.os.Build
 
-class PersonaManager(private val context: Context) {
-    // maya_prefs নামে ডাটা সেভ হবে
-    private val prefs = context.getSharedPreferences("maya_prefs", Context.MODE_PRIVATE)
+object PersonaManager {
+    enum class Persona { NORMAL, ANIME_FLIRTY, PROFESSIONAL, HELPFUL }
+    var currentPersona = Persona.ANIME_FLIRTY
 
-    var gfMode: Boolean
-        get() = prefs.getBoolean("gf_mode", false)
-        set(v) = prefs.edit().putBoolean("gf_mode", v).apply()
-
-    var userPetName: String
-        get() = prefs.getString("pet_name", "jaan") ?: "jaan"
-        set(v) = prefs.edit().putString("pet_name", v).apply()
-
-    var aliases: List<String>
-        get() = prefs.getString("aliases", "myra,অনিমি,আর্জেটা")?.split(',')?.map { it.trim() } ?: listOf("myra")
-        set(v) = prefs.edit().putString("aliases", v.joinToString(",")).apply()
-
-    fun isCalledByName(lowerText: String): String? {
-        val lowered = lowerText.lowercase()
-        return aliases.firstOrNull { lowered.contains(it.lowercase()) }
+    fun getGreeting(name: String): String {
+        return when (currentPersona) {
+            Persona.ANIME_FLIRTY -> "Hello $name, I was waiting just for you! ❤️"
+            Persona.PROFESSIONAL -> "Good day $name. How may I assist with your system tasks?"
+            else -> "Hey $name, I'm here to help!"
+        }
     }
 
-    fun formatSpeech(text: String): String {
-        return if (gfMode) {
-            when {
-                text.startsWith("Yes") || text.startsWith("Yes,") -> 
-                    "Yes, ${userPetName}? ${text.removePrefix("Yes,").replaceFirst("Yes", "").trim()}"
-                else -> "${affectionPrefix()} $text"
-            }
-        } else text
+    fun getSystemStatus(): String {
+        val thermal = "Optimal" // Simulated
+        return "System health: $thermal. Battery: Healthy. I'm feeling great!"
     }
-
-    private fun affectionPrefix(): String = "Sweetheart," 
 }

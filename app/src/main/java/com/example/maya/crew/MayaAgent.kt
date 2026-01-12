@@ -32,6 +32,11 @@ class MayaAgent(
             simulateDuckDuckGoSearch(taskDescription)
         }
 
+        // Simulate Multi-Agent Collaboration
+        if (taskDescription.contains("complex", true)) {
+            delegateToSubAgent(taskDescription)
+        }
+
         // Log completion
         val endLog = JSONObject().apply {
             put("agent", name)
@@ -39,6 +44,15 @@ class MayaAgent(
             put("result", "Processed task successfully using Gemini-1.5-flash")
         }
         WebhookHelper.sendAction("agent_progress", endLog) { _, _ -> }
+    }
+
+    private fun delegateToSubAgent(task: String) {
+        val delegationLog = JSONObject().apply {
+            put("agent", name)
+            put("action", "delegating_to_specialist")
+            put("sub_task", "Refining search results for complex query")
+        }
+        WebhookHelper.sendAction("agent_progress", delegationLog) { _, _ -> }
     }
 
     private fun simulateDuckDuckGoSearch(query: String) {

@@ -334,6 +334,16 @@ class MainActivity : AppCompatActivity() {
         val name = "Sweetheart"
         if (task != null) return "Maya: Sure $name, I've noted your $task task."
         
+        // Dynamic Persona Greeting
+        if (text.contains("hello", true) || text.contains("hi", true)) {
+            return "Maya: ${PersonaManager.getGreeting(name)}"
+        }
+
+        // System Health Check
+        if (text.contains("status", true) || text.contains("health", true)) {
+            return "Maya: ${PersonaManager.getSystemStatus()}"
+        }
+        
         return when (emotion) {
             "HAPPY" -> "Maya: I'm so glad to hear that, $name! 😊"
             "SAD" -> "Maya: Don't be sad, $name. I'm here for you. ❤️"
