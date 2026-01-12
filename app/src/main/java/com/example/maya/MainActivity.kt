@@ -351,9 +351,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun detectEmotion(text: String): String {
         return when {
-            text.contains("happy", true) || text.contains("ভালো", true) -> "HAPPY"
-            text.contains("sad", true) || text.contains("খারাপ", true) -> "SAD"
-            text.contains("wow", true) || text.contains("অবাক", true) -> "EXCITED"
+            text.contains("happy", true) || text.contains("ভালো", true) || text.contains("great", true) -> "HAPPY"
+            text.contains("sad", true) || text.contains("খারাপ", true) || text.contains("mon kharap", true) -> "SAD"
+            text.contains("wow", true) || text.contains("অবাক", true) || text.contains("amazing", true) -> "EXCITED"
+            text.contains("angry", true) || text.contains("রাগ", true) -> "ANGRY"
             else -> "CALM"
         }
     }
@@ -377,6 +378,16 @@ class MainActivity : AppCompatActivity() {
     private fun generateResponse(text: String, emotion: String, task: String?): String {
         val name = "Sweetheart"
         
+        // Proactive mood check-in
+        if (text.contains("how are you", true) || text.contains("ki khobor", true)) {
+            val moodPrompt = when(emotion) {
+                "SAD" -> "I'm here for you, $name. Tell me what's bothering you? ❤️"
+                "HAPPY" -> "I'm wonderful because you're happy! What's making you smile today? 😊"
+                else -> "I'm doing great, $name! How are you feeling right now?"
+            }
+            return "Maya: $moodPrompt"
+        }
+
         // Randomly suggest new features to the user to keep them engaged
         if (java.util.Random().nextInt(10) < 2) { // 20% chance to suggest a feature
             val suggestions = listOf(
@@ -384,7 +395,8 @@ class MainActivity : AppCompatActivity() {
                 "I've learned how to check your battery status. Just ask!",
                 "I can open YouTube or Facebook for you if you're bored.",
                 "Did you know I can remember things for you? Tell me something to remember!",
-                "I can even adjust your screen brightness if it's too bright."
+                "I can even adjust your screen brightness if it's too bright.",
+                "I can feel if you shake your phone! It's like my own distress signal."
             )
             return "Maya: ${suggestions.random()}"
         }
