@@ -433,25 +433,34 @@ class MainActivity : AppCompatActivity() {
     private fun updateMayaState(state: MayaState) {
         ivAvatar.clearAnimation()
         when (state) {
-            MayaState.IDLE -> ivAvatar.alpha = 1.0f
+            MayaState.IDLE -> {
+                ivAvatar.alpha = 1.0f
+                ivAvatar.setImageResource(R.drawable.maya_normal) // Base face
+            }
             MayaState.THINKING -> {
                 ivAvatar.animate().scaleX(1.05f).scaleY(1.05f).setDuration(500).start()
+                ivAvatar.setImageResource(R.drawable.maya_thinking)
             }
             MayaState.SPEAKING -> {
                 ivAvatar.animate().rotation(2f).setDuration(200).start()
+                ivAvatar.setImageResource(R.drawable.maya_speaking)
             }
             MayaState.HAPPY -> {
                 ivAvatar.animate().scaleX(1.1f).scaleY(1.1f).setDuration(300).start()
+                ivAvatar.setImageResource(R.drawable.maya_happy)
             }
             MayaState.SAD -> {
                 ivAvatar.animate().alpha(0.7f).translationY(10f).setDuration(500).start()
+                ivAvatar.setImageResource(R.drawable.maya_sad)
             }
             MayaState.EXCITED -> {
                 ivAvatar.animate().scaleX(1.2f).scaleY(1.2f).rotation(5f).setDuration(300).start()
+                ivAvatar.setImageResource(R.drawable.maya_excited)
             }
             MayaState.SLEEP -> {
                 tvStatus.text = "Maya: Zzz..."
                 ivAvatar.animate().alpha(0.4f).scaleX(0.9f).scaleY(0.9f).setDuration(1000).start()
+                ivAvatar.setImageResource(R.drawable.maya_sleep)
             }
         }
     }
