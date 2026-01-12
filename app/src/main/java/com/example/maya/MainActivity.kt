@@ -263,6 +263,29 @@ class MainActivity : AppCompatActivity() {
                     val version = Build.VERSION.RELEASE
                     tvStatus.text = "Maya: This is a $model running Android $version. It's a beautiful device, just like you!"
                 }
+                text.contains("search", true) || text.contains("খুঁজো", true) || text.contains("জানাও", true) -> {
+                    val query = text.substringAfter("search").substringAfter("খুঁজো").substringAfter("জানাও").trim()
+                    tvStatus.text = "Maya: Searching the internet for '$query'..."
+                    searchAgent.executeTask(query)
+                }
+                text.contains("news", true) || text.contains("খবর", true) -> {
+                    val query = "latest news"
+                    tvStatus.text = "Maya: Fetching the latest news for you, Sweetheart."
+                    searchAgent.executeTask(query)
+                }
+                text.contains("weather", true) || text.contains("আবহাওয়া", true) -> {
+                    val query = "current weather"
+                    tvStatus.text = "Maya: Checking the weather forecast."
+                    searchAgent.executeTask(query)
+                }
+                text.contains("open", true) && (text.contains("google", true) || text.contains("youtube", true) || text.contains("facebook", true)) -> {
+                    val site = if (text.contains("google", true)) "google.com" 
+                              else if (text.contains("youtube", true)) "youtube.com"
+                              else "facebook.com"
+                    val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://www.$site"))
+                    startActivity(intent)
+                    tvStatus.text = "Maya: Opening $site for you."
+                }
             }
         }, 1000)
     }
