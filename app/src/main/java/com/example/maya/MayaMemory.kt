@@ -31,6 +31,16 @@ class MayaMemory(context: Context) {
         prefs.edit().remove("chat_history").apply()
     }
 
+    fun saveFact(fact: String) {
+        val facts = getFacts()
+        facts.add(fact)
+        prefs.edit().putStringSet("user_facts", facts.toSet()).apply()
+    }
+
+    fun getFacts(): MutableList<String> {
+        return prefs.getStringSet("user_facts", emptySet())?.toMutableList() ?: mutableListOf()
+    }
+
     fun getLastContext(): String {
         val history = getHistory()
         if (history.length() > 0) {

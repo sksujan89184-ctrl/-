@@ -61,10 +61,13 @@ class MainActivity : AppCompatActivity() {
 
         // Send startup greeting to Webhook for Make.com verification
         val greeting = JSONObject().apply {
-            put("message", "Hello! Maya AI is now active and connected to Make.com.")
+            put("message", "Hello! Maya AI is now active.")
             put("device", Build.MODEL)
         }
         WebhookHelper.sendAction("startup_greeting", greeting) { _, _ -> }
+        
+        // Proactive engagement on start
+        tvStatus.text = "Maya: I'm here, Sweetheart. You look wonderful today!"
 
         btnSettings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
@@ -137,12 +140,25 @@ class MainActivity : AppCompatActivity() {
         updateMayaState(MayaState.THINKING)
         tvStatus.text = "Maya: thinking..."
         
+        // Proactive greeting based on stored memory
+        if (text.contains("remember", true) || text.contains("মনে রাখো", true)) {
+            val fact = text.substringAfter("remember").substringAfter("মনে রাখো").trim()
+            mayaMemory.saveFact(fact)
+            tvStatus.text = "Maya: I've remembered that for you, Sweetheart."
+            return
+        }
+
         val emotion = detectEmotion(text)
         val task = detectTask(text)
         
         Handler(Looper.getMainLooper()).postDelayed({
             val response = generateResponse(text, emotion, task)
             tvStatus.text = response
+            
+            // Check for sadness proactively
+            if (emotion == "SAD") {
+                tvStatus.text = "Maya: You look a bit down, Sweetheart. Is everything okay? Talk to me."
+            }
             mayaMemory.saveMessage(text, response)
             
             // Execute Agent Task if needed
