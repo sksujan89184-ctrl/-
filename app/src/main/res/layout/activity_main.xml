@@ -4,40 +4,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F0F1E"
+    android:background="#1A1A1A"
     tools:context=".MainActivity">
 
-    <!-- Futuristic Background Decoration -->
-    <View
-        android:id="@+id/bg_glow"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:background="@drawable/neon_glow_circle"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="-100dp"
-        android:layout_marginEnd="-100dp" />
-
-    <!-- Anime Avatar Placeholder -->
+    <!-- Full Screen Background Image (The anime character you provided) -->
     <ImageView
         android:id="@+id/iv_maya_avatar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:src="@drawable/myra_placeholder"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_card"
-        android:layout_marginBottom="16dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Glassmorphism Bottom Card -->
+    <!-- Top Toolbar overlay -->
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="#44000000"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Maya AI Agent"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btn_settings"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_manage"
+            app:tint="#00E5FF" />
+    </LinearLayout>
+
+    <!-- Glassmorphism Bottom Card (Matching the photo) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/bottom_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="24dp"
+        app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
-        android:layout_margin="16dp"
-        app:cardBackgroundColor="#22FFFFFF"
+        android:layout_margin="12dp"
+        app:cardBackgroundColor="#66222222"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
@@ -50,67 +68,42 @@
                 android:id="@+id/tv_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Maya: Hello! How can I help you today?"
+                android:text="Maya: I'm listening, Sweetheart..."
                 android:textColor="#E0E0FF"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="8dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:background="@drawable/glass_input_bg"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp">
 
                 <EditText
                     android:id="@+id/et_input"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:background="@drawable/glass_input_bg"
+                    android:background="@android:color/transparent"
                     android:hint="Talk to Maya..."
                     android:textColorHint="#99E0E0FF"
                     android:textColor="#FFFFFF"
-                    android:paddingHorizontal="16dp"
                     android:imeOptions="actionSend"
                     android:inputType="text" />
 
                 <ImageButton
                     android:id="@+id/btn_voice"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:layout_marginStart="12dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="@drawable/neon_mic_bg"
                     android:src="@android:drawable/ic_btn_speak_now"
                     app:tint="#FFFFFF" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-
-    <ImageButton
-        android:id="@+id/btn_settings"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_margin="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@android:drawable/ic_menu_manage"
-        app:tint="#FFFFFF"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- Overlay Log -->
-    <TextView
-        android:id="@+id/tv_log"
-        android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_margin="16dp"
-        android:background="#44000000"
-        android:padding="8dp"
-        android:textColor="#00FFCC"
-        android:textSize="10sp"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

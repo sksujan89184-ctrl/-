@@ -1,6 +1,8 @@
 package com.example.maya
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -12,8 +14,16 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MotionEvent
 import android.os.CountDownTimer
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
+    
+    private val REQUIRED_PERMISSIONS = arrayOf(
+        Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.SYSTEM_ALERT_WINDOW
+    )
+    private val PERMISSION_REQUEST_CODE = 123
 
     private lateinit var tvStatus: TextView
     private lateinit var ivAvatar: ImageView
@@ -28,6 +38,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        
+        checkAndRequestPermissions()
 
         mayaMemory = MayaMemory(this)
         tvStatus = findViewById(R.id.tv_status)
@@ -72,6 +84,24 @@ class MainActivity : AppCompatActivity() {
                 ivAvatar.animate().translationX(0f).translationY(0f).setDuration(200).start()
             }
             false
+        }
+    }
+
+    private fun checkAndRequestPermissions() {
+        val missingPermissions = REQUIRED_PERMISSIONS.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+        if (missingPermissions.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, missingPermissions.toTypedArray(), PERMISSION_REQUEST_CODE)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.any { it != PackageManager.PERMISSION_GRANTED }) {
+                Toast.makeText(this, "Permissions are required for Maya to work properly", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
