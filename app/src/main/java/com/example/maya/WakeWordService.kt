@@ -22,7 +22,8 @@ class WakeWordService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("MayaWake", "Wake word service started with noise cancellation")
-        // Start listening with background noise suppression to ignore music/videos
+        // Start system-wide listening for "Maya"
+        // This would use a background STT or keyword spotting engine
         return START_STICKY
     }
 

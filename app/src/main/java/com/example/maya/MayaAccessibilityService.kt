@@ -19,7 +19,9 @@ class MayaAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
         
-        // Example: Capture text from the screen to "read" notification or content
+        // Handle global wake word "Maya" detection results
+        // When "Maya" is heard, this service can overlay UI or perform actions
+        
         val rootNode = rootInActiveWindow
         if (rootNode != null) {
             val sb = StringBuilder()

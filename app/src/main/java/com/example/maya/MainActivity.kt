@@ -290,6 +290,18 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                     tvStatus.text = "Maya: Opening $site for you."
                 }
+                text.contains("scroll", true) || text.contains("স্ক্রোল", true) -> {
+                    if (text.contains("down", true) || text.contains("নিচে", true)) {
+                        MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_SCROLL_FORWARD)
+                        tvStatus.text = "Maya: Scrolling down."
+                    } else {
+                        MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_SCROLL_BACKWARD)
+                        tvStatus.text = "Maya: Scrolling up."
+                    }
+                }
+                text.contains("click", true) || text.contains("ক্লিক", true) -> {
+                    tvStatus.text = "Maya: I'll try to click that for you."
+                }
             }
         }, 1000)
     }
