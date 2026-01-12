@@ -191,6 +191,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 text.contains("recent", true) || text.contains("অ্যাপস", true) -> {
                     MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_RECENTS)
+                    tvStatus.text = "Maya: Showing recent apps."
                 }
                 text.contains("open", true) && text.contains("camera", true) -> {
                     val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
