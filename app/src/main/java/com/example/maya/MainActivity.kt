@@ -242,6 +242,27 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                     tvStatus.text = "Maya: Opening display settings to adjust brightness."
                 }
+                text.contains("storage", true) || text.contains("মেমোরি", true) -> {
+                    val stat = android.os.StatFs(android.os.Environment.getDataDirectory().path)
+                    val bytesAvailable = stat.blockSizeLong * stat.availableBlocksLong
+                    val megAvailable = bytesAvailable / (1024 * 1024)
+                    tvStatus.text = "Maya: You have ${megAvailable / 1024}GB of free space left, Sweetheart."
+                }
+                text.contains("bluetooth", true) || text.contains("ব্লুটুথ", true) -> {
+                    val intent = Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS)
+                    startActivity(intent)
+                    tvStatus.text = "Maya: Opening Bluetooth settings for you."
+                }
+                text.contains("airplane", true) || text.contains("এয়ারপ্লেন", true) -> {
+                    val intent = Intent(android.provider.Settings.ACTION_AIRPLANE_MODE_SETTINGS)
+                    startActivity(intent)
+                    tvStatus.text = "Maya: Opening Airplane mode settings."
+                }
+                text.contains("tell me about", true) || text.contains("কেমন", true) -> {
+                    val model = Build.MODEL
+                    val version = Build.VERSION.RELEASE
+                    tvStatus.text = "Maya: This is a $model running Android $version. It's a beautiful device, just like you!"
+                }
             }
         }, 1000)
     }
