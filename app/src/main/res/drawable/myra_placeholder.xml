@@ -1,26 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="120dp"
-    android:height="120dp"
-    android:viewportWidth="120"
-    android:viewportHeight="120">
-
+    android:width="1080dp"
+    android:height="1920dp"
+    android:viewportWidth="1080"
+    android:viewportHeight="1920">
     <path
-        android:fillColor="#FFD28A"
-        android:pathData="M60,4a56,56 0 1,0 0,112a56,56 0 1,0 0,-112z" />
+        android:fillColor="#1A1A1A"
+        android:pathData="M0,0h1080v1920h-1080z" />
+    <!-- Placeholder for the anime character shape -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M40,45c2,-6 10,-12 20,-12s18,6 20,12c0,0 -6,6 -20,6s-20,-6 -20,-6z"
-        android:fillAlpha="0.15"/>
-    <path
-        android:fillColor="#2C3E50"
-        android:pathData="M44,58c0,0 4,6 12,6s12,-6 12,-6" 
-        android:strokeWidth="2"
-        android:strokeColor="#2C3E50"/>
-    <path
-        android:fillColor="#2C9FF7"
-        android:pathData="M46,41a5,5 0 1,1 0,10a5,5 0 1,1 0,-10z" />
-    <path
-        android:fillColor="#2C9FF7"
-        android:pathData="M74,41a5,5 0 1,1 0,10a5,5 0 1,1 0,-10z" />
+        android:fillColor="#333333"
+        android:pathData="M540,400c-100,0 -180,80 -180,180s80,180 180,180 180,-80 180,-180 -80,-180 -180,-180z M540,800c-200,0 -360,160 -360,360v400h720v-400c0,-200 -160,-360 -360,-360z" />
 </vector>

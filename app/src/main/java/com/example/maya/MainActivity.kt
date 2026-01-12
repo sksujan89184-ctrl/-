@@ -159,8 +159,12 @@ class MainActivity : AppCompatActivity() {
             updateMayaStateFromEmotion(emotion)
             simulateLipSync()
             
-            // Phone control logic (simplified example)
-            if (text.contains("open", true) && text.contains("camera", true)) {
+            // Phone control logic (Accessibility actions)
+            if (text.contains("back", true)) {
+                MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BACK)
+            } else if (text.contains("home", true)) {
+                MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_HOME)
+            } else if (text.contains("open", true) && text.contains("camera", true)) {
                 val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
                 startActivity(intent)
             }

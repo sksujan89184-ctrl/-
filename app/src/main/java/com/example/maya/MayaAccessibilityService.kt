@@ -7,6 +7,15 @@ import android.util.Log
 
 class MayaAccessibilityService : AccessibilityService() {
 
+    companion object {
+        var instance: MayaAccessibilityService? = null
+    }
+
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        instance = this
+    }
+
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
         
