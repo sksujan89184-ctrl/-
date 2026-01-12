@@ -355,6 +355,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun generateResponse(text: String, emotion: String, task: String?): String {
         val name = "Sweetheart"
+        
+        // Randomly suggest new features to the user to keep them engaged
+        if (java.util.Random().nextInt(10) < 2) { // 20% chance to suggest a feature
+            val suggestions = listOf(
+                "By the way, I can control your flashlight now! Want to try?",
+                "I've learned how to check your battery status. Just ask!",
+                "I can open YouTube or Facebook for you if you're bored.",
+                "Did you know I can remember things for you? Tell me something to remember!",
+                "I can even adjust your screen brightness if it's too bright."
+            )
+            return "Maya: ${suggestions.random()}"
+        }
+
         if (task != null) return "Maya: Sure $name, I've noted your $task task."
         
         // Dynamic Persona Greeting
