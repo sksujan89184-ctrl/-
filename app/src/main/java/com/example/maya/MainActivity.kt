@@ -181,6 +181,14 @@ class MainActivity : AppCompatActivity() {
                     tvStatus.text = "Maya: Analyzing the media for you, Sweetheart."
                     searchAgent.executeTask("Perform deep analysis on the last imported image/video")
                 }
+                text.contains("clear", true) && (text.contains("memory", true) || text.contains("chat", true)) -> {
+                    mayaMemory.clear()
+                    tvStatus.text = "Maya: Memory cleared, Sweetheart. Starting fresh!"
+                }
+                text.contains("sleep", true) -> {
+                    updateMayaState(MayaState.SLEEP)
+                    tvStatus.text = "Maya: Going to sleep now. Wake me up anytime!"
+                }
             }
         }, 1000)
     }
