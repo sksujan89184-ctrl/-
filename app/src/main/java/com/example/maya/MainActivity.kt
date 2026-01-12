@@ -189,6 +189,33 @@ class MainActivity : AppCompatActivity() {
                     updateMayaState(MayaState.SLEEP)
                     tvStatus.text = "Maya: Going to sleep now. Wake me up anytime!"
                 }
+                text.contains("battery", true) || text.contains("চার্জ", true) -> {
+                    val batteryIntent = registerReceiver(null, android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED))
+                    val level = batteryIntent?.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, -1) ?: -1
+                    val scale = batteryIntent?.getIntExtra(android.os.BatteryManager.EXTRA_SCALE, -1) ?: -1
+                    val batteryPct = level * 100 / scale.toFloat()
+                    tvStatus.text = "Maya: Your battery is at ${batteryPct.toInt()}%, Sweetheart."
+                }
+                text.contains("launch", true) || text.contains("চালু", true) -> {
+                    val appName = text.substringAfter("launch").substringAfter("চালু").trim()
+                    try {
+                        val launchIntent = packageManager.getLaunchIntentForPackage(appName) ?: 
+                                         packageManager.getLaunchIntentForPackage("com.android.$appName")
+                        if (launchIntent != null) {
+                            startActivity(launchIntent)
+                            tvStatus.text = "Maya: Launching $appName for you."
+                        } else {
+                            tvStatus.text = "Maya: I couldn't find an app named $appName."
+                        }
+                    } catch (e: Exception) {
+                        tvStatus.text = "Maya: Error launching app: ${e.message}"
+                    }
+                }
+                text.contains("wifi", true) -> {
+                    val panelIntent = Intent(android.provider.Settings.Panel.ACTION_WIFI)
+                    startActivity(panelIntent)
+                    tvStatus.text = "Maya: Opening WiFi settings for you."
+                }
             }
         }, 1000)
     }
