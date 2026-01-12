@@ -17,8 +17,16 @@ import android.os.CountDownTimer
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
+import com.example.maya.crew.MayaAgent
+
 class MainActivity : AppCompatActivity() {
     
+    // Initializing the search agent
+    private val searchAgent = MayaAgent(
+        name = "Maya Searcher",
+        role = "Research Analyst",
+        goal = "Find accurate information using DuckDuckGo"
+    )
     private val REQUIRED_PERMISSIONS = arrayOf(
         Manifest.permission.RECORD_AUDIO,
         Manifest.permission.SYSTEM_ALERT_WINDOW
@@ -127,6 +135,11 @@ class MainActivity : AppCompatActivity() {
             tvStatus.text = response
             mayaMemory.saveMessage(text, response)
             
+            // Execute Agent Task if needed
+            if (task != null || text.contains("search", true)) {
+                searchAgent.executeTask(text)
+            }
+
             // Send to Webhook
             val logData = JSONObject()
             logData.put("user_input", text)
