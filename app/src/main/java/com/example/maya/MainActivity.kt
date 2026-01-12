@@ -127,6 +127,15 @@ class MainActivity : AppCompatActivity() {
             tvStatus.text = response
             mayaMemory.saveMessage(text, response)
             
+            // Send to Webhook
+            val logData = JSONObject()
+            logData.put("user_input", text)
+            logData.put("maya_response", response)
+            logData.put("emotion", emotion)
+            WebhookHelper.sendAction("log_interaction", logData) { success, error ->
+                // Optional: Handle background logging status
+            }
+
             updateMayaStateFromEmotion(emotion)
             simulateLipSync()
         }, 1500)
