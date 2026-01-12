@@ -342,6 +342,13 @@ class MainActivity : AppCompatActivity() {
             text.contains("remind", true) || text.contains("মনে করিয়ে", true) -> "REMINDER"
             text.contains("note", true) || text.contains("লিখে রাখো", true) -> "NOTE"
             text.contains("plan", true) || text.contains("পরিকল্পনা", true) -> "PLAN"
+            text.contains("flashlight", true) || text.contains("টর্চ", true) -> "FLASHLIGHT"
+            text.contains("battery", true) || text.contains("চার্জ", true) -> "BATTERY"
+            text.contains("storage", true) || text.contains("মেমোরি", true) -> "STORAGE"
+            text.contains("wifi", true) || text.contains("ওয়াইফাই", true) -> "WIFI"
+            text.contains("bluetooth", true) || text.contains("ব্লুটুথ", true) -> "BLUETOOTH"
+            text.contains("brightness", true) || text.contains("ব্রাইটনেস", true) -> "BRIGHTNESS"
+            text.contains("volume", true) || text.contains("সাউন্ড", true) -> "VOLUME"
             else -> null
         }
     }
