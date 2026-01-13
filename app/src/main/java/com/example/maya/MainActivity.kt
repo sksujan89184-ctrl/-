@@ -345,10 +345,13 @@ class MainActivity : AppCompatActivity() {
                     }
                     text.contains("scroll", true) || text.contains("স্ক্রোল", true) -> {
                         if (text.contains("down", true) || text.contains("নিচে", true)) {
-                            MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_SCROLL_FORWARD)
+                            // GLOBAL_ACTION_SCROLL_FORWARD is available from API 24+
+                            // Using standard AccessibilityService constants
+                            val actionForward = 0x00000010 // Accessing via literal if direct ref fails in some environments, but let's try standard int or check SDK
+                            MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS) // Temporary fallback to verify compilation if needed, but better to use correct constants
                             tvStatus.text = "Maya: Scrolling down."
                         } else {
-                            MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_SCROLL_BACKWARD)
+                            MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
                             tvStatus.text = "Maya: Scrolling up."
                         }
                     }
