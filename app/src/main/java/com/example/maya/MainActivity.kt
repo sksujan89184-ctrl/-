@@ -332,16 +332,28 @@ class MainActivity : AppCompatActivity() {
                         }
                         window.attributes = layoutParams
                     }
-                    text.contains("click", true) || text.contains("ক্লিক", true) -> {
-                        val elementText = text.substringAfter("click").substringAfter("ক্লিক").trim()
+                    text.contains("click", true) || text.contains("ক্লিক", true) || text.contains("दबाएं", true) || text.contains("کلک", true) -> {
+                        val elementText = when {
+                            text.contains("click") -> text.substringAfter("click").trim()
+                            text.contains("ক্লিক") -> text.substringAfter("ক্লিক").trim()
+                            text.contains("दबाएं") -> text.substringBefore("दবাएं").trim()
+                            text.contains("کلک") -> text.substringBefore("کلک").trim()
+                            else -> text
+                        }
                         MayaAccessibilityService.instance?.clickElementByText(elementText)
                     }
                     text.contains("scroll", true) || text.contains("স্ক্রল", true) -> {
                         val forward = !text.contains("up", true) && !text.contains("উপরে", true)
                         MayaAccessibilityService.instance?.scroll(forward)
                     }
-                    text.contains("type", true) || text.contains("লেখো", true) -> {
-                        val content = text.substringAfter("type").substringAfter("লেখো").trim()
+                    text.contains("type", true) || text.contains("লেখো", true) || text.contains("लिखें", true) || text.contains("لکھیں", true) -> {
+                        val content = when {
+                            text.contains("type") -> text.substringAfter("type").trim()
+                            text.contains("লেখো") -> text.substringAfter("লেখো").trim()
+                            text.contains("लिखें") -> text.substringAfter("लिखें").trim()
+                            text.contains("لکھیں") -> text.substringAfter("لکھیں").trim()
+                            else -> text
+                        }
                         MayaAccessibilityService.instance?.inputText(content)
                     }
                 }
