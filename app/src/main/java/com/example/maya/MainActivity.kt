@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Maya AI Assistant initialization - pushing update for testing git
         setContentView(R.layout.activity_main)
         
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as android.hardware.SensorManager
