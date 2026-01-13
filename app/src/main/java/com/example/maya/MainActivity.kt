@@ -92,6 +92,12 @@ class MainActivity : AppCompatActivity() {
         }
         WebhookHelper.sendAction("startup_greeting", greeting) { _, _ -> }
         
+        if (intent.getBooleanExtra("trigger_voice", false)) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                btnVoice.performClick()
+            }, 500)
+        }
+        
         tvStatus.text = "Maya ❤️: I'm here, Sweetheart. You look wonderful today!"
         
         Handler(Looper.getMainLooper()).postDelayed({
