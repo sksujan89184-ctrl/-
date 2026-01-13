@@ -34,8 +34,22 @@ class TTSHelper private constructor(context: Context) : TextToSpeech.OnInitListe
         }
     }
 
-    fun speak(text: String) {
+    fun setLanguage(lang: String) {
+        val locale = when(lang) {
+            "bn" -> Locale("bn", "BD")
+            "ur" -> Locale("ur", "PK")
+            "hi" -> Locale("hi", "IN")
+            else -> Locale.US
+        }
+        val result = tts?.setLanguage(locale) ?: TextToSpeech.LANG_NOT_SUPPORTED
+        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            tts?.setLanguage(Locale.US)
+        }
+    }
+
+    fun speak(text: String, lang: String = "en") {
         if (isReady) {
+            setLanguage(lang)
             tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
         }
     }

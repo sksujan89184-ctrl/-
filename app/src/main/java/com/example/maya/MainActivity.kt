@@ -256,7 +256,7 @@ class MainActivity : AppCompatActivity() {
             
             // Text reply only by default, TTS only if explicitly asked or via voice button
             if (isVoiceRequest(text)) {
-                TTSHelper.getInstance(this).speak(response)
+                TTSHelper.getInstance(this@MainActivity).speak(response, lang)
             }
             
             mayaMemory.saveMessage(text, response)
@@ -310,6 +310,16 @@ class MainActivity : AppCompatActivity() {
                     }
                     text.contains("playstore", true) || text.contains("প্লে স্টোর", true) || text.contains("play store", true) -> {
                         openUrl("https://play.google.com/store", "com.android.vending")
+                    }
+                    text.contains("settings", true) || text.contains("সেটিংস", true) -> {
+                        startActivity(Intent(android.provider.Settings.ACTION_SETTINGS))
+                    }
+                    text.contains("calculator", true) || text.contains("ক্যালকুলেটর", true) -> {
+                        val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_APP_CALCULATOR)
+                        try { startActivity(intent) } catch(e: Exception) { openUrl("https://www.google.com/search?q=calculator") }
+                    }
+                    text.contains("maps", true) || text.contains("ম্যাপস", true) -> {
+                        openUrl("https://maps.google.com", "com.google.android.apps.maps")
                     }
                     text.contains("brightness", true) || text.contains("উজ্জ্বলতা", true) -> {
                         val layoutParams = window.attributes
@@ -375,25 +385,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun detectTask(text: String): String? {
+        val lowerText = text.lowercase()
         return when {
-            text.contains("flashlight", true) || text.contains("টর্চ", true) -> "FLASHLIGHT"
-            text.contains("battery", true) || text.contains("চার্জ", true) -> "BATTERY"
-            text.contains("chrome", true) || text.contains("ক্রোম", true) -> "CHROME"
-            text.contains("camera", true) || text.contains("ক্যামেরা", true) -> "CAMERA"
-            text.contains("playstore", true) || text.contains("প্লে স্টোর", true) || text.contains("play store", true) -> "PLAYSTORE"
-            text.contains("youtube", true) || text.contains("ইউটিউব", true) -> "YOUTUBE"
-            text.contains("facebook", true) || text.contains("ফেসবুক", true) -> "FACEBOOK"
-            text.contains("brightness", true) || text.contains("উজ্জ্বলতা", true) -> "BRIGHTNESS"
+            lowerText.contains("flashlight") || lowerText.contains("টর্চ") || lowerText.contains("लाइट") || lowerText.contains("ٹارچ") -> "FLASHLIGHT"
+            lowerText.contains("battery") || lowerText.contains("চার্জ") || lowerText.contains("बैटरी") || lowerText.contains("بیٹری") -> "BATTERY"
+            lowerText.contains("chrome") || lowerText.contains("ক্রোম") || lowerText.contains("क्रोम") || lowerText.contains("کروم") -> "CHROME"
+            lowerText.contains("camera") || lowerText.contains("ক্যামেরা") || lowerText.contains("कैमरा") || lowerText.contains("کیمرہ") -> "CAMERA"
+            lowerText.contains("playstore") || lowerText.contains("প্লে স্টোর") || lowerText.contains("प्ले स्टोर") || lowerText.contains("پلے اسٹور") -> "PLAYSTORE"
+            lowerText.contains("youtube") || lowerText.contains("ইউটিউব") || lowerText.contains("यूट्यूब") || lowerText.contains("یوٹیوب") -> "YOUTUBE"
+            lowerText.contains("facebook") || lowerText.contains("ফেসবুক") || lowerText.contains("फेसबुक") || lowerText.contains("فیس بک") -> "FACEBOOK"
+            lowerText.contains("brightness") || lowerText.contains("উজ্জ্বলতা") || lowerText.contains("चमक") || lowerText.contains("چمک") -> "BRIGHTNESS"
+            lowerText.contains("settings") || lowerText.contains("সেটিংস") || lowerText.contains("सेटিন") || lowerText.contains("سیٹنگ") -> "SETTINGS"
+            lowerText.contains("calculator") || lowerText.contains("ক্যালকুলেটর") || lowerText.contains("कैलकुलेटर") || lowerText.contains("کیلکولیٹر") -> "CALCULATOR"
+            lowerText.contains("maps") || lowerText.contains("ম্যাপস") || lowerText.contains("नक्शे") || lowerText.contains("نقشے") -> "MAPS"
             else -> null
         }
     }
 
     private fun generateResponse(text: String, emotion: String, task: String?): String {
         val name = "Sweetheart"
-        val prefix = "Maya ❤️: "
         
         // Multi-language support detection
-        val lang = if (text.contains("বাংলা", true) || text.any { it in '\u0980'..'\u09FF' }) "bn" else "en"
+        val lang = when {
+            text.contains("বাংলা", true) || text.any { it in '\u0980'..'\u09FF' } -> "bn"
+            text.any { it in '\u0600'..'\u06FF' } -> "ur"
+            text.any { it in '\u0900'..'\u097F' } -> "hi"
+            else -> "en"
+        }
+        
+        val prefix = when(lang) {
+            "ur" -> "مایا ❤️: "
+            "hi" -> "माया ❤️: "
+            else -> "Maya ❤️: "
+        }
         
         // Check for learned facts
         val relevantFact = mayaMemory.getFacts().find { fact -> 
