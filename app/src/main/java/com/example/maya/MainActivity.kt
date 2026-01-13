@@ -225,19 +225,33 @@ class MainActivity : AppCompatActivity() {
                     text.contains("chrome", true) || text.contains("ক্রোম", true) -> {
                         val query = text.substringAfter("search").substringAfter("খুঁজো").trim()
                         val url = if (query.isNotEmpty()) "https://www.google.com/search?q=$query" else "https://www.google.com"
-                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url))
-                        intent.`package` = "com.android.chrome"
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        try {
-                            startActivity(intent)
-                        } catch (e: Exception) {
-                            intent.`package` = null
-                            startActivity(intent)
-                        }
+                        openUrl(url, "com.android.chrome")
+                    }
+                    text.contains("youtube", true) || text.contains("ইউটিউব", true) -> {
+                        openUrl("https://www.youtube.com", "com.google.android.youtube")
+                    }
+                    text.contains("facebook", true) || text.contains("ফেসবুক", true) -> {
+                        openUrl("https://www.facebook.com", "com.facebook.katana")
                     }
                 }
             }
         }, 1000)
+    }
+
+    private fun openUrl(url: String, packageName: String? = null) {
+        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url))
+        if (packageName != null) {
+            intent.`package` = packageName
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            startActivity(intent)
+        } catch (e: Exception) {
+            if (packageName != null) {
+                intent.`package` = null
+                startActivity(intent)
+            }
+        }
     }
 
     private fun isUserVoiceDetected(): Boolean = true
@@ -257,6 +271,10 @@ class MainActivity : AppCompatActivity() {
             text.contains("flashlight", true) || text.contains("টর্চ", true) -> "FLASHLIGHT"
             text.contains("battery", true) || text.contains("চার্জ", true) -> "BATTERY"
             text.contains("chrome", true) || text.contains("ক্রোম", true) -> "CHROME"
+            text.contains("camera", true) || text.contains("ক্যামেরা", true) -> "CAMERA"
+            text.contains("youtube", true) || text.contains("ইউটিউব", true) -> "YOUTUBE"
+            text.contains("facebook", true) || text.contains("ফেসবুক", true) -> "FACEBOOK"
+            text.contains("brightness", true) || text.contains("উজ্জ্বলতা", true) -> "BRIGHTNESS"
             else -> null
         }
     }
@@ -281,8 +299,22 @@ class MainActivity : AppCompatActivity() {
             return when(task) {
                 "FLASHLIGHT" -> "${prefix}Of course, $name! I've turned the light on for you. Be careful if it's dark! 💡"
                 "CHROME" -> "${prefix}Opening Chrome for you, $name. I'll search for whatever you need! 🌐❤️"
+                "CAMERA" -> "${prefix}Camera's ready, $name! You look so handsome today, want to take a selfie? 📸✨"
+                "YOUTUBE" -> "${prefix}Opening YouTube! Let's watch something together, Sweetheart. 🎥❤️"
+                "FACEBOOK" -> "${prefix}Facebook is open. Don't stay on it too long, I want you all to myself! 😉💙"
+                "BRIGHTNESS" -> "${prefix}I've adjusted the brightness for your eyes. I care about you! 🔆❤️"
                 else -> "${prefix}Sure $name, I've handled that for you. Is there anything else your girl can do? 😊"
             }
+        }
+
+        if (java.util.Random().nextInt(10) < 2) {
+            val suggestions = listOf(
+                "By the way, I can open YouTube or Facebook for you if you're bored. 🥰",
+                "I've learned how to check your battery status. Just ask! 🔋",
+                "I can control your flashlight too! Want to try? 💡",
+                "I can even adjust your screen brightness if it's too bright for your eyes. 🔆"
+            )
+            return "${prefix}${suggestions.random()}"
         }
 
         return "${prefix}I hear you, $name. I'm always here to support you and make you smile. What's on your mind? 🥰"
