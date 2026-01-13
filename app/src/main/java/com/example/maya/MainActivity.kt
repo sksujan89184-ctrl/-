@@ -26,6 +26,11 @@ import com.example.maya.WebhookHelper
 import com.example.maya.SettingsActivity
 import com.example.maya.MayaAccessibilityService
 import com.example.maya.PersonaManager
+import android.widget.EditText
+import android.widget.Toast
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.ImageButton
 
 class MainActivity : AppCompatActivity() {
     
