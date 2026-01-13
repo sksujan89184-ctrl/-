@@ -84,6 +84,15 @@
                 android:background="@drawable/glass_input_bg"
                 android:paddingHorizontal="15dp">
 
+                <ImageButton
+                    android:id="@+id/btn_attach"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_share"
+                    android:layout_marginEnd="10dp"
+                    app:tint="#00E5FF" />
+
                 <EditText
                     android:id="@+id/et_input"
                     android:layout_width="0dp"

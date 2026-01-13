@@ -53,6 +53,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var ivAvatar: ImageView
     private lateinit var btnVoice: ImageButton
     private lateinit var btnSettings: ImageButton
+    private lateinit var btnAttach: ImageButton
+    private val PICK_IMAGE_REQUEST = 100
 
     enum class MayaState { IDLE, THINKING, SPEAKING, HAPPY, SAD, EXCITED, SLEEP }
     
@@ -82,6 +84,7 @@ class MainActivity : AppCompatActivity() {
         ivAvatar = findViewById(R.id.iv_maya_avatar)
         btnVoice = findViewById(R.id.btn_voice)
         btnSettings = findViewById(R.id.btn_settings)
+        btnAttach = findViewById(R.id.btn_attach)
         
         startIdleAnimation()
         resetSleepTimer()
@@ -108,6 +111,12 @@ class MainActivity : AppCompatActivity() {
 
         btnSettings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
+        }
+
+        btnAttach.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/* video/*"
+            startActivityForResult(intent, PICK_IMAGE_REQUEST)
         }
 
         btnVoice.setOnClickListener {
@@ -140,6 +149,20 @@ class MainActivity : AppCompatActivity() {
                 ivAvatar.animate().translationX(0f).translationY(0f).setDuration(200).start()
             }
             false
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            val selectedMedia = data.data
+            tvStatus.text = "Maya ❤️: Oh, what a beautiful ${if(selectedMedia.toString().contains("video")) "video" else "picture"}! You look amazing, Sweetheart! 🥰"
+            
+            val logData = JSONObject().apply {
+                put("action", "media_received")
+                put("media_uri", selectedMedia.toString())
+            }
+            WebhookHelper.sendAction("media_upload", logData) { _, _ -> }
         }
     }
 
