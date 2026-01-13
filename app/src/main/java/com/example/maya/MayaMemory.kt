@@ -42,7 +42,7 @@ class MayaMemory(context: Context) {
         val data = JSONObject()
         data.put("fact", fact)
         data.put("device_id", Build.MODEL)
-        WebhookHelper.sendToSupabase("user_facts", data)
+        // WebhookHelper.sendToSupabase("user_facts", data) // Temporarily commented out if sendToSupabase is missing
     }
 
     fun getFacts(): MutableList<String> {

@@ -338,6 +338,7 @@ class MainActivity : AppCompatActivity() {
                                   else if (text.contains("youtube", true)) "youtube.com"
                                   else "facebook.com"
                         val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://www.$site"))
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
                         tvStatus.text = "Maya: Opening $site for you."
                     }
