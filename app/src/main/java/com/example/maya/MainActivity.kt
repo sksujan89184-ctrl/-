@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
     private val PERMISSION_REQUEST_CODE = 123
 
     private lateinit var tvStatus: TextView
+    private lateinit var rvChatHistory: androidx.recyclerview.widget.RecyclerView
     private lateinit var ivAvatar: ImageView
     private lateinit var btnVoice: ImageButton
     private lateinit var btnSettings: ImageButton
@@ -83,6 +84,7 @@ class MainActivity : AppCompatActivity() {
 
         mayaMemory = MayaMemory(this)
         tvStatus = findViewById(R.id.tv_status)
+        rvChatHistory = findViewById(R.id.rv_chat_history)
         ivAvatar = findViewById(R.id.iv_maya_avatar)
         btnVoice = findViewById(R.id.btn_voice)
         btnSettings = findViewById(R.id.btn_settings)
@@ -110,6 +112,15 @@ class MainActivity : AppCompatActivity() {
                 tvStatus.text = "Maya ❤️: By the way, remember to drink some water. Your health is my priority! ❤️"
             }
         }, 5000)
+
+        tvStatus.setOnClickListener {
+            if (rvChatHistory.visibility == View.VISIBLE) {
+                rvChatHistory.visibility = View.GONE
+            } else {
+                rvChatHistory.visibility = View.VISIBLE
+                displayChatHistory()
+            }
+        }
 
         btnSettings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
@@ -166,6 +177,26 @@ class MainActivity : AppCompatActivity() {
             }
             WebhookHelper.sendAction("media_upload", logData) { _, _ -> }
         }
+    }
+
+    private fun displayChatHistory() {
+        val history = mayaMemory.getHistory()
+        val adapter = object : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+            override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+                val tv = TextView(parent.context).apply {
+                    setTextColor(android.graphics.Color.WHITE)
+                    setPadding(10, 10, 10, 10)
+                }
+                return object : androidx.recyclerview.widget.RecyclerView.ViewHolder(tv) {}
+            }
+            override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+                (holder.itemView as TextView).text = history.getString(position).replace("|", "\n")
+            }
+            override fun getItemCount(): Int = history.length()
+        }
+        rvChatHistory.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        rvChatHistory.adapter = adapter
+        rvChatHistory.scrollToPosition(history.length() - 1)
     }
 
     private fun checkAndRequestPermissions() {
