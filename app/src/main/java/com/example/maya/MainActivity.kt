@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity() {
             tvStatus.text = "Maya ❤️: I'm listening, Sweetheart..."
             startPulseAnimation(btnVoice)
             // Trigger TTS greeting
-            TTSHelper.speak("I'm here, Sweetheart. You look wonderful today!", this)
+            TTSHelper.getInstance(this).speak("I'm here, Sweetheart. You look wonderful today!")
         }
 
         findViewById<EditText>(R.id.et_input).setOnEditorActionListener { v, _, _ ->
@@ -214,7 +214,7 @@ class MainActivity : AppCompatActivity() {
             mayaMemory.saveFact(fact)
             val response = "Maya ❤️: I've remembered that for you, Sweetheart."
             tvStatus.text = response
-            TTSHelper.speak(response, this)
+            TTSHelper.getInstance(this).speak(response)
             return
         }
 
@@ -224,7 +224,7 @@ class MainActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             val response = generateResponse(text, emotion, task)
             tvStatus.text = response
-            TTSHelper.speak(response, this)
+            TTSHelper.getInstance(this).speak(response)
             
             mayaMemory.saveMessage(text, response)
             
