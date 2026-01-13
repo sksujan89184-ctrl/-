@@ -9,17 +9,6 @@ import android.util.Log
 
 class WakeWordService : Service() {
 
-    override fun onCreate() {
-        super.onCreate()
-        createNotificationChannel()
-        val notification = NotificationCompat.Builder(this, "maya_channel")
-            .setContentTitle("Maya is Active")
-            .setContentText("Listening for wake word...")
-            .setSmallIcon(android.R.drawable.ic_btn_speak_now)
-            .build()
-        startForeground(1, notification)
-    }
-
     private lateinit var speechRecognizer: android.speech.SpeechRecognizer
 
     override fun onCreate() {
