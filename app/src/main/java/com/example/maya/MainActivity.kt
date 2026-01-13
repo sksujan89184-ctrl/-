@@ -250,6 +250,18 @@ class MainActivity : AppCompatActivity() {
                         }
                         window.attributes = layoutParams
                     }
+                    text.contains("click", true) || text.contains("ক্লিক", true) -> {
+                        val elementText = text.substringAfter("click").substringAfter("ক্লিক").trim()
+                        MayaAccessibilityService.instance?.clickElementByText(elementText)
+                    }
+                    text.contains("scroll", true) || text.contains("স্ক্রল", true) -> {
+                        val forward = !text.contains("up", true) && !text.contains("উপরে", true)
+                        MayaAccessibilityService.instance?.scroll(forward)
+                    }
+                    text.contains("type", true) || text.contains("লেখো", true) -> {
+                        val content = text.substringAfter("type").substringAfter("লেখো").trim()
+                        MayaAccessibilityService.instance?.inputText(content)
+                    }
                 }
             }
         }, 1000)

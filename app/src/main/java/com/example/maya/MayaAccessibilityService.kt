@@ -21,13 +21,33 @@ class MayaAccessibilityService : AccessibilityService() {
         
         // Handle global wake word "Maya" detection results
         // When "Maya" is heard, this service can overlay UI or perform actions
+    }
+
+    fun clickElementByText(text: String): Boolean {
+        val rootNode = rootInActiveWindow ?: return false
+        val nodes = rootNode.findAccessibilityNodeInfosByText(text)
+        if (nodes.isNullOrEmpty()) return false
         
-        val rootNode = rootInActiveWindow
-        if (rootNode != null) {
-            val sb = StringBuilder()
-            extractText(rootNode, sb)
-            // Log.d("MayaAccess", "Screen content: ${sb.toString()}")
+        for (node in nodes) {
+            if (node.isClickable) {
+                node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                return true
+            }
         }
+        return false
+    }
+
+    fun scroll(forward: Boolean): Boolean {
+        val rootNode = rootInActiveWindow ?: return false
+        return rootNode.performAction(if (forward) AccessibilityNodeInfo.ACTION_SCROLL_FORWARD else AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+    }
+
+    fun inputText(text: String): Boolean {
+        val rootNode = rootInActiveWindow ?: return false
+        val focusedNode = rootNode.findFocus(AccessibilityNodeInfo.FOCUS_INPUT) ?: return false
+        val bundle = android.os.Bundle()
+        bundle.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text)
+        return focusedNode.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, bundle)
     }
 
     private fun extractText(node: AccessibilityNodeInfo, sb: StringBuilder) {
