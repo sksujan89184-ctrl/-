@@ -126,8 +126,6 @@ class MainActivity : AppCompatActivity() {
             updateMayaState(MayaState.SPEAKING)
             tvStatus.text = "Maya ❤️: I'm listening, Sweetheart..."
             startPulseAnimation(btnVoice)
-            // Trigger TTS greeting
-            TTSHelper.getInstance(this).speak("I'm here, Sweetheart. You look wonderful today!")
         }
 
         findViewById<EditText>(R.id.et_input).setOnEditorActionListener { v, _, _ ->
@@ -224,7 +222,11 @@ class MainActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             val response = generateResponse(text, emotion, task)
             tvStatus.text = response
-            TTSHelper.getInstance(this).speak(response)
+            
+            // Text reply only by default, TTS only if explicitly asked or via voice button
+            if (isVoiceRequest(text)) {
+                TTSHelper.getInstance(this).speak(response)
+            }
             
             mayaMemory.saveMessage(text, response)
             
@@ -319,6 +321,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun isVoiceRequest(text: String): Boolean {
+        return text.contains("speak", true) || 
+               text.contains("বল", true) || 
+               text.contains("শোনাও", true) || 
+               text.contains("read", true)
+    }
+
     private fun isUserVoiceDetected(): Boolean = true
 
     private fun detectEmotion(text: String): String {
@@ -408,7 +417,7 @@ class MainActivity : AppCompatActivity() {
         when (state) {
             MayaState.IDLE -> {
                 ivAvatar.alpha = 1.0f
-                ivAvatar.setImageResource(R.drawable.beautiful_anime_girl_assistant_avatar)
+                ivAvatar.setImageResource(R.drawable.maya_3d_avatar)
                 startIdleAnimation()
             }
             MayaState.THINKING -> {
