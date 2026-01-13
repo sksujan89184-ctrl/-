@@ -408,7 +408,7 @@ class MainActivity : AppCompatActivity() {
         when (state) {
             MayaState.IDLE -> {
                 ivAvatar.alpha = 1.0f
-                ivAvatar.setImageResource(R.drawable.myra_placeholder)
+                ivAvatar.setImageResource(R.drawable.beautiful_anime_girl_assistant_avatar)
                 startIdleAnimation()
             }
             MayaState.THINKING -> {
