@@ -358,10 +358,7 @@ class MainActivity : AppCompatActivity() {
         }, 1000)
     }
 
-
     private fun isUserVoiceDetected(): Boolean {
-        // Simplified check: In a real app, this would use the SpeakerVerifier TFLite model
-        // to compare current audio with the stored user voice embedding.
         return true 
     }
 
@@ -393,8 +390,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun generateResponse(text: String, emotion: String, task: String?): String {
         val name = "Sweetheart"
-        
-        // Proactive mood check-in
         if (text.contains("how are you", true) || text.contains("ki khobor", true)) {
             val moodPrompt = when(emotion) {
                 "SAD" -> "I'm here for you, $name. Tell me what's bothering you? ❤️"
@@ -403,9 +398,7 @@ class MainActivity : AppCompatActivity() {
             }
             return "Maya: $moodPrompt"
         }
-
-        // Randomly suggest new features to the user to keep them engaged
-        if (java.util.Random().nextInt(10) < 2) { // 20% chance to suggest a feature
+        if (java.util.Random().nextInt(10) < 2) { 
             val suggestions = listOf(
                 "By the way, I can control your flashlight now! Want to try?",
                 "I've learned how to check your battery status. Just ask!",
@@ -416,19 +409,13 @@ class MainActivity : AppCompatActivity() {
             )
             return "Maya: ${suggestions.random()}"
         }
-
         if (task != null) return "Maya: Sure $name, I've noted your $task task."
-        
-        // Dynamic Persona Greeting
         if (text.contains("hello", true) || text.contains("hi", true)) {
             return "Maya: ${PersonaManager.getGreeting(name)}"
         }
-
-        // System Health Check
         if (text.contains("status", true) || text.contains("health", true)) {
             return "Maya: ${PersonaManager.getSystemStatus()}"
         }
-        
         return when (emotion) {
             "HAPPY" -> "Maya: I'm so glad to hear that, $name! 😊"
             "SAD" -> "Maya: Don't be sad, $name. I'm here for you. ❤️"
