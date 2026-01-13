@@ -448,7 +448,7 @@ class MainActivity : AppCompatActivity() {
         when (state) {
             MayaState.IDLE -> {
                 ivAvatar.alpha = 1.0f
-                ivAvatar.setImageResource(R.drawable.maya_normal) // Base face
+                ivAvatar.setImageResource(R.drawable.maya_normal)
             }
             MayaState.THINKING -> {
                 ivAvatar.animate().scaleX(1.05f).scaleY(1.05f).setDuration(500).start()
