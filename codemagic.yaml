@@ -9,7 +9,7 @@ workflows:
       - name: Build Android App
         script: | 
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace -Pandroid.useAndroidX=true -Pandroid.enableJetifier=true
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
     artifacts:
       - "**/build/outputs/apk/debug/*.apk"
