@@ -396,14 +396,30 @@ class MainActivity : AppCompatActivity() {
             MayaState.IDLE -> {
                 ivAvatar.alpha = 1.0f
                 ivAvatar.setImageResource(R.drawable.myra_placeholder)
+                startIdleAnimation()
             }
             MayaState.THINKING -> {
-                ivAvatar.animate().scaleX(1.05f).scaleY(1.05f).setDuration(500).start()
+                ivAvatar.animate().scaleX(1.05f).scaleY(1.05f).setDuration(500).setInterpolator(android.view.animation.AccelerateDecelerateInterpolator()).start()
+            }
+            MayaState.SPEAKING -> {
+                simulateLipSync()
+            }
+            MayaState.HAPPY -> {
+                ivAvatar.animate().rotationBy(5f).setDuration(200).withEndAction {
+                    ivAvatar.animate().rotationBy(-5f).setDuration(200).start()
+                }.start()
+            }
+            MayaState.SAD -> {
+                ivAvatar.animate().alpha(0.7f).scaleX(0.95f).scaleY(0.95f).setDuration(500).start()
+            }
+            MayaState.EXCITED -> {
+                ivAvatar.animate().scaleX(1.2f).scaleY(1.2f).setDuration(300).withEndAction {
+                    ivAvatar.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start()
+                }.start()
             }
             MayaState.SLEEP -> {
                 ivAvatar.alpha = 0.5f
             }
-            else -> {}
         }
     }
 
@@ -413,9 +429,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun simulateLipSync() {
-        ivAvatar.animate().scaleY(1.1f).setDuration(100).withEndAction {
-            ivAvatar.animate().scaleY(1.0f).setDuration(100).start()
-        }.start()
+        val handler = Handler(Looper.getMainLooper())
+        val runnable = object : Runnable {
+            var count = 0
+            override fun run() {
+                if (count < 10) {
+                    val scale = 1.0f + (java.util.Random().nextFloat() * 0.1f)
+                    ivAvatar.animate().scaleY(scale).setDuration(100).start()
+                    count++
+                    handler.postDelayed(this, 150)
+                } else {
+                    ivAvatar.animate().scaleY(1.0f).setDuration(100).start()
+                }
+            }
+        }
+        handler.post(runnable)
     }
 
     private fun startPulseAnimation(view: View) {
