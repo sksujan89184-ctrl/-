@@ -216,15 +216,15 @@ class MainActivity : AppCompatActivity() {
                 // Phone control logic (Accessibility actions)
                 when {
                     text.contains("back", true) || text.contains("পিছনে", true) -> {
-                        MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BACK)
+                        MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
                         tvStatus.text = "Maya: Going back for you."
                     }
                     text.contains("home", true) || text.contains("হোম", true) -> {
-                        MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_HOME)
+                        MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
                         tvStatus.text = "Maya: Returning to home screen."
                     }
                     text.contains("recent", true) || text.contains("অ্যাপস", true) -> {
-                        MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_RECENTS)
+                        MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS)
                         tvStatus.text = "Maya: Showing recent apps."
                     }
                     text.contains("open", true) && text.contains("camera", true) -> {
@@ -343,10 +343,10 @@ class MainActivity : AppCompatActivity() {
                     }
                     text.contains("scroll", true) || text.contains("স্ক্রোল", true) -> {
                         if (text.contains("down", true) || text.contains("নিচে", true)) {
-                            MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_SCROLL_FORWARD)
+                            MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_SCROLL_FORWARD)
                             tvStatus.text = "Maya: Scrolling down."
                         } else {
-                            MayaAccessibilityService.instance?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_SCROLL_BACKWARD)
+                            MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_SCROLL_BACKWARD)
                             tvStatus.text = "Maya: Scrolling up."
                         }
                     }
