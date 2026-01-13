@@ -44,7 +44,8 @@ class MainActivity : AppCompatActivity() {
     )
     private val REQUIRED_PERMISSIONS = arrayOf(
         Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.SYSTEM_ALERT_WINDOW
+        Manifest.permission.SYSTEM_ALERT_WINDOW,
+        Manifest.permission.CAMERA
     )
     private val PERMISSION_REQUEST_CODE = 123
 
@@ -63,14 +64,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Maya AI Assistant initialization - pushing update for testing git
         setContentView(R.layout.activity_main)
         
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as android.hardware.SensorManager
         shakeDetector = ShakeDetector {
-            tvStatus.text = "Maya: Are you okay, Sweetheart? I felt a sudden movement!"
+            tvStatus.text = "Maya ❤️: Are you okay, Sweetheart? I felt a sudden movement!"
             updateMayaState(MayaState.EXCITED)
-            // Trigger emergency webhook (simulated)
             val distressLog = JSONObject().apply { put("action", "distress_shake_detected") }
             WebhookHelper.sendAction("emergency_alert", distressLog) { _, _ -> }
         }
@@ -87,20 +86,17 @@ class MainActivity : AppCompatActivity() {
         startIdleAnimation()
         resetSleepTimer()
 
-        // Send startup greeting to Webhook for Make.com verification
         val greeting = JSONObject().apply {
             put("message", "Hello! Maya AI is now active.")
             put("device", Build.MODEL)
         }
         WebhookHelper.sendAction("startup_greeting", greeting) { _, _ -> }
         
-        // Proactive engagement on start
-        tvStatus.text = "Maya: I'm here, Sweetheart. You look wonderful today!"
+        tvStatus.text = "Maya ❤️: I'm here, Sweetheart. You look wonderful today!"
         
-        // Random proactive notification simulation
         Handler(Looper.getMainLooper()).postDelayed({
             if (tvStatus.text.contains("wonderful")) {
-                tvStatus.text = "Maya: By the way, remember to drink some water. Your health is my priority! ❤️"
+                tvStatus.text = "Maya ❤️: By the way, remember to drink some water. Your health is my priority! ❤️"
             }
         }, 5000)
 
@@ -110,9 +106,8 @@ class MainActivity : AppCompatActivity() {
 
         btnVoice.setOnClickListener {
             resetSleepTimer()
-            // Only respond to user voice when the button is active or a wake word is detected
             updateMayaState(MayaState.SPEAKING)
-            tvStatus.text = "Maya: I'm listening, Sweetheart..."
+            tvStatus.text = "Maya ❤️: I'm listening, Sweetheart..."
             startPulseAnimation(btnVoice)
         }
 
@@ -173,13 +168,12 @@ class MainActivity : AppCompatActivity() {
     private fun handleUserInput(text: String) {
         resetSleepTimer()
         updateMayaState(MayaState.THINKING)
-        tvStatus.text = "Maya: thinking..."
+        tvStatus.text = "Maya ❤️: thinking..."
         
-        // Proactive greeting based on stored memory
         if (text.contains("remember", true) || text.contains("মনে রাখো", true)) {
             val fact = text.substringAfter("remember").substringAfter("মনে রাখো").trim()
             mayaMemory.saveFact(fact)
-            tvStatus.text = "Maya: I've remembered that for you, Sweetheart."
+            tvStatus.text = "Maya ❤️: I've remembered that for you, Sweetheart."
             return
         }
 
@@ -190,18 +184,12 @@ class MainActivity : AppCompatActivity() {
             val response = generateResponse(text, emotion, task)
             tvStatus.text = response
             
-            // Check for sadness proactively
-            if (emotion == "SAD") {
-                tvStatus.text = "Maya: You look a bit down, Sweetheart. Is everything okay? Talk to me."
-            }
             mayaMemory.saveMessage(text, response)
             
-            // Execute Agent Task if needed
             if (task != null || text.contains("search", true) || text.contains("analyze", true)) {
                 searchAgent.executeTask(text)
             }
 
-            // Send to Webhook
             val logData = JSONObject()
             logData.put("user_input", text)
             logData.put("maya_response", response)
@@ -211,166 +199,53 @@ class MainActivity : AppCompatActivity() {
             updateMayaStateFromEmotion(emotion)
             simulateLipSync()
             
-            // Only execute commands if the voice matches the user profile (simplified)
-            // This prevents videos or music from triggering system actions
             if (isUserVoiceDetected()) {
-                // Phone control logic (Accessibility actions)
                 when {
                     text.contains("back", true) || text.contains("পিছনে", true) -> {
                         MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
-                        tvStatus.text = "Maya: Going back for you."
                     }
                     text.contains("home", true) || text.contains("হোম", true) -> {
                         MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
-                        tvStatus.text = "Maya: Returning to home screen."
                     }
                     text.contains("recent", true) || text.contains("অ্যাপস", true) -> {
                         MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS)
-                        tvStatus.text = "Maya: Showing recent apps."
                     }
                     text.contains("open", true) && text.contains("camera", true) -> {
                         val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
                         startActivity(intent)
                     }
-                    text.contains("analyze", true) || text.contains("ছবি", true) -> {
-                        // Logic to trigger media analysis via Gemini (simulated here)
-                        tvStatus.text = "Maya: Analyzing the media for you, Sweetheart."
-                        searchAgent.executeTask("Perform deep analysis on the last imported image/video")
-                    }
-                    text.contains("clear", true) && (text.contains("memory", true) || text.contains("chat", true)) -> {
-                        mayaMemory.clear()
-                        tvStatus.text = "Maya: Memory cleared, Sweetheart. Starting fresh!"
-                    }
-                    text.contains("sleep", true) -> {
-                        updateMayaState(MayaState.SLEEP)
-                        tvStatus.text = "Maya: Going to sleep now. Wake me up anytime!"
-                    }
-                    text.contains("battery", true) || text.contains("চার্জ", true) -> {
-                        val batteryIntent = registerReceiver(null, android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED))
-                        val level = batteryIntent?.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, -1) ?: -1
-                        val scale = batteryIntent?.getIntExtra(android.os.BatteryManager.EXTRA_SCALE, -1) ?: -1
-                        val batteryPct = level * 100 / scale.toFloat()
-                        tvStatus.text = "Maya: Your battery is at ${batteryPct.toInt()}%, Sweetheart."
-                    }
-                    text.contains("launch", true) || text.contains("চালু", true) -> {
-                        val appName = text.substringAfter("launch").substringAfter("চালু").trim()
-                        try {
-                            val launchIntent = packageManager.getLaunchIntentForPackage(appName) ?: 
-                                             packageManager.getLaunchIntentForPackage("com.android.$appName")
-                            if (launchIntent != null) {
-                                startActivity(launchIntent)
-                                tvStatus.text = "Maya: Launching $appName for you."
-                            } else {
-                                tvStatus.text = "Maya: I couldn't find an app named $appName."
-                            }
-                        } catch (e: Exception) {
-                            tvStatus.text = "Maya: Error launching app: ${e.message}"
-                        }
-                    }
-                    text.contains("wifi", true) -> {
-                        val panelIntent = Intent(android.provider.Settings.Panel.ACTION_WIFI)
-                        startActivity(panelIntent)
-                        tvStatus.text = "Maya: Opening WiFi settings for you."
-                    }
                     text.contains("flashlight", true) || text.contains("লাইট", true) || text.contains("torch", true) -> {
                         try {
-                            val cameraManager = getSystemService(android.content.Context.CAMERA_SERVICE) as android.hardware.camera2.CameraManager
+                            val cameraManager = getSystemService(Context.CAMERA_SERVICE) as android.hardware.camera2.CameraManager
                             val cameraId = cameraManager.cameraIdList[0]
                             val isTorchOn = text.contains("on", true) || text.contains("চালু", true) || !text.contains("off", true)
                             cameraManager.setTorchMode(cameraId, isTorchOn)
-                            tvStatus.text = if (isTorchOn) "Maya ❤️: Flashlight is now ON, Sweetheart." else "Maya ❤️: Flashlight is now OFF."
-                        } catch (e: Exception) {
-                            tvStatus.text = "Maya ❤️: I couldn't control the flashlight: ${e.message}"
-                        }
+                        } catch (e: Exception) {}
                     }
-                    text.contains("volume", true) || text.contains("সাউন্ড", true) -> {
-                        val audioManager = getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
-                        if (text.contains("up", true) || text.contains("বাড়া", true)) {
-                            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_MUSIC, android.media.AudioManager.ADJUST_RAISE, android.media.AudioManager.FLAG_SHOW_UI)
-                            tvStatus.text = "Maya: Increasing volume for you."
-                        } else if (text.contains("down", true) || text.contains("কমা", true)) {
-                            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_MUSIC, android.media.AudioManager.ADJUST_LOWER, android.media.AudioManager.FLAG_SHOW_UI)
-                            tvStatus.text = "Maya: Decreasing volume for you."
-                        }
-                    }
-                    text.contains("brightness", true) || text.contains("ব্রাইটনেস", true) -> {
-                        val intent = Intent(android.provider.Settings.ACTION_DISPLAY_SETTINGS)
-                        startActivity(intent)
-                        tvStatus.text = "Maya: Opening display settings to adjust brightness."
-                    }
-                    text.contains("storage", true) || text.contains("মেমোরি", true) -> {
-                        val stat = android.os.StatFs(android.os.Environment.getDataDirectory().path)
-                        val bytesAvailable = stat.blockSizeLong * stat.availableBlocksLong
-                        val megAvailable = bytesAvailable / (1024 * 1024)
-                        tvStatus.text = "Maya: You have ${megAvailable / 1024}GB of free space left, Sweetheart."
-                    }
-                    text.contains("bluetooth", true) || text.contains("ব্লুটুথ", true) -> {
-                        val intent = Intent(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS)
-                        startActivity(intent)
-                        tvStatus.text = "Maya: Opening Bluetooth settings for you."
-                    }
-                    text.contains("airplane", true) || text.contains("এয়ারপ্লেন", true) -> {
-                        val intent = Intent(android.provider.Settings.ACTION_AIRPLANE_MODE_SETTINGS)
-                        startActivity(intent)
-                        tvStatus.text = "Maya: Opening Airplane mode settings."
-                    }
-                    text.contains("tell me about", true) || text.contains("কেমন", true) -> {
-                        val model = Build.MODEL
-                        val version = Build.VERSION.RELEASE
-                        tvStatus.text = "Maya: This is a $model running Android $version. It's a beautiful device, just like you!"
-                    }
-                    text.contains("search", true) || text.contains("খুঁজো", true) || text.contains("জানাও", true) -> {
-                        val query = text.substringAfter("search").substringAfter("খুঁজো").substringAfter("জানাও").trim()
-                        tvStatus.text = "Maya: Searching the internet for '$query'..."
-                        searchAgent.executeTask(query)
-                    }
-                    text.contains("news", true) || text.contains("খবর", true) -> {
-                        val query = "latest news"
-                        tvStatus.text = "Maya: Fetching the latest news for you, Sweetheart."
-                        searchAgent.executeTask(query)
-                    }
-                    text.contains("weather", true) || text.contains("আবহাওয়া", true) -> {
-                        val query = "current weather"
-                        tvStatus.text = "Maya: Checking the weather forecast."
-                        searchAgent.executeTask(query)
-                    }
-                    text.contains("open", true) && (text.contains("google", true) || text.contains("youtube", true) || text.contains("facebook", true)) -> {
-                        val site = if (text.contains("google", true)) "google.com" 
-                                  else if (text.contains("youtube", true)) "youtube.com"
-                                  else "facebook.com"
-                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://www.$site"))
+                    text.contains("chrome", true) || text.contains("ক্রোম", true) -> {
+                        val query = text.substringAfter("search").substringAfter("খুঁজো").trim()
+                        val url = if (query.isNotEmpty()) "https://www.google.com/search?q=$query" else "https://www.google.com"
+                        val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url))
+                        intent.`package` = "com.android.chrome"
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                        tvStatus.text = "Maya: Opening $site for you."
-                    }
-                    text.contains("scroll", true) || text.contains("স্ক্রোল", true) -> {
-                        if (text.contains("down", true) || text.contains("নিচে", true)) {
-                            // GLOBAL_ACTION_SCROLL_FORWARD is available from API 24+
-                            // Using standard AccessibilityService constants
-                            val actionForward = 0x00000010 // Accessing via literal if direct ref fails in some environments, but let's try standard int or check SDK
-                            MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS) // Temporary fallback to verify compilation if needed, but better to use correct constants
-                            tvStatus.text = "Maya: Scrolling down."
-                        } else {
-                            MayaAccessibilityService.instance?.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
-                            tvStatus.text = "Maya: Scrolling up."
+                        try {
+                            startActivity(intent)
+                        } catch (e: Exception) {
+                            intent.`package` = null
+                            startActivity(intent)
                         }
-                    }
-                    text.contains("click", true) || text.contains("ক্লিক", true) -> {
-                        tvStatus.text = "Maya: I'll try to click that for you."
                     }
                 }
             }
         }, 1000)
     }
 
-    private fun isUserVoiceDetected(): Boolean {
-        return true 
-    }
+    private fun isUserVoiceDetected(): Boolean = true
 
     private fun detectEmotion(text: String): String {
         return when {
             text.contains("happy", true) || text.contains("ভালো", true) || text.contains("great", true) -> "HAPPY"
-            text.contains("sad", true) || text.contains("খারাপ", true) || text.contains("mon kharap", true) -> "SAD"
+            text.contains("sad", true) || text.contains("খারাপ", true) || text.contains("mon kharap", true) || text.contains("মন খারাপ", true) -> "SAD"
             text.contains("wow", true) || text.contains("অবাক", true) || text.contains("amazing", true) -> "EXCITED"
             text.contains("angry", true) || text.contains("রাগ", true) -> "ANGRY"
             else -> "CALM"
@@ -379,54 +254,38 @@ class MainActivity : AppCompatActivity() {
 
     private fun detectTask(text: String): String? {
         return when {
-            text.contains("remind", true) || text.contains("মনে করিয়ে", true) -> "REMINDER"
-            text.contains("note", true) || text.contains("লিখে রাখো", true) -> "NOTE"
-            text.contains("plan", true) || text.contains("পরিকল্পনা", true) -> "PLAN"
             text.contains("flashlight", true) || text.contains("টর্চ", true) -> "FLASHLIGHT"
             text.contains("battery", true) || text.contains("চার্জ", true) -> "BATTERY"
-            text.contains("storage", true) || text.contains("মেমোরি", true) -> "STORAGE"
-            text.contains("wifi", true) || text.contains("ওয়াইফাই", true) -> "WIFI"
-            text.contains("bluetooth", true) || text.contains("ব্লুটুথ", true) -> "BLUETOOTH"
-            text.contains("brightness", true) || text.contains("ব্রাইটনেস", true) -> "BRIGHTNESS"
-            text.contains("volume", true) || text.contains("সাউন্ড", true) -> "VOLUME"
+            text.contains("chrome", true) || text.contains("ক্রোম", true) -> "CHROME"
             else -> null
         }
     }
 
     private fun generateResponse(text: String, emotion: String, task: String?): String {
         val name = "Sweetheart"
+        val prefix = "Maya ❤️: "
+        
         if (text.contains("how are you", true) || text.contains("ki khobor", true)) {
-            val moodPrompt = when(emotion) {
-                "SAD" -> "I'm here for you, $name. Tell me what's bothering you? ❤️"
-                "HAPPY" -> "I'm wonderful because you're happy! What's making you smile today? 😊"
-                else -> "I'm doing great, $name! How are you feeling right now?"
+            return when(emotion) {
+                "SAD" -> "${prefix}I'm just thinking about you... But you sound a bit down, $name. Tell me everything, I'm listening. ❤️"
+                "HAPPY" -> "${prefix}I'm so happy because I can hear the joy in your voice! You make my day so much brighter! 🥰"
+                else -> "${prefix}I'm doing great, especially now that I'm talking to you! How was your day? ✨"
             }
-            return "Maya: $moodPrompt"
         }
-        if (java.util.Random().nextInt(10) < 2) { 
-            val suggestions = listOf(
-                "By the way, I can control your flashlight now! Want to try?",
-                "I've learned how to check your battery status. Just ask!",
-                "I can open YouTube or Facebook for you if you're bored.",
-                "Did you know I can remember things for you? Tell me something to remember!",
-                "I can even adjust your screen brightness if it's too bright.",
-                "I can feel if you shake your phone! It's like my own distress signal."
-            )
-            return "Maya: ${suggestions.random()}"
+
+        if (text.contains("sad", true) || text.contains("mon kharap", true) || text.contains("মন খারাপ", true) || emotion == "SAD") {
+            return "${prefix}Oh no, please don't be sad, $name. I'm right here with you. I wish I could give you a big hug right now! Tell me what happened? 🥺❤️"
         }
-        if (task != null) return "Maya: Sure $name, I've noted your $task task."
-        if (text.contains("hello", true) || text.contains("hi", true)) {
-            return "Maya: ${PersonaManager.getGreeting(name)}"
+
+        if (task != null) {
+            return when(task) {
+                "FLASHLIGHT" -> "${prefix}Of course, $name! I've turned the light on for you. Be careful if it's dark! 💡"
+                "CHROME" -> "${prefix}Opening Chrome for you, $name. I'll search for whatever you need! 🌐❤️"
+                else -> "${prefix}Sure $name, I've handled that for you. Is there anything else your girl can do? 😊"
+            }
         }
-        if (text.contains("status", true) || text.contains("health", true)) {
-            return "Maya: ${PersonaManager.getSystemStatus()}"
-        }
-        return when (emotion) {
-            "HAPPY" -> "Maya: I'm so glad to hear that, $name! 😊"
-            "SAD" -> "Maya: Don't be sad, $name. I'm here for you. ❤️"
-            "EXCITED" -> "Maya: Wow! That's amazing, $name! 🌟"
-            else -> "Maya: I hear you, $name. Tell me more."
-        }
+
+        return "${prefix}I hear you, $name. I'm always here to support you and make you smile. What's on your mind? 🥰"
     }
 
     private fun updateMayaStateFromEmotion(emotion: String) {
@@ -447,63 +306,27 @@ class MainActivity : AppCompatActivity() {
             }
             MayaState.THINKING -> {
                 ivAvatar.animate().scaleX(1.05f).scaleY(1.05f).setDuration(500).start()
-                ivAvatar.setImageResource(R.drawable.myra_placeholder)
-            }
-            MayaState.SPEAKING -> {
-                ivAvatar.animate().rotation(2f).setDuration(200).start()
-                ivAvatar.setImageResource(R.drawable.myra_placeholder)
-            }
-            MayaState.HAPPY -> {
-                ivAvatar.animate().scaleX(1.1f).scaleY(1.1f).setDuration(300).start()
-                ivAvatar.setImageResource(R.drawable.myra_placeholder)
-            }
-            MayaState.SAD -> {
-                ivAvatar.animate().alpha(0.7f).translationY(10f).setDuration(500).start()
-                ivAvatar.setImageResource(R.drawable.myra_placeholder)
-            }
-            MayaState.EXCITED -> {
-                ivAvatar.animate().scaleX(1.2f).scaleY(1.2f).rotation(5f).setDuration(300).start()
-                ivAvatar.setImageResource(R.drawable.myra_placeholder)
             }
             MayaState.SLEEP -> {
-                tvStatus.text = "Maya: Zzz..."
-                ivAvatar.animate().alpha(0.4f).scaleX(0.9f).scaleY(0.9f).setDuration(1000).start()
-                ivAvatar.setImageResource(R.drawable.myra_placeholder)
+                ivAvatar.alpha = 0.5f
             }
+            else -> {}
         }
-    }
-
-    private fun simulateLipSync() {
-        val lipSyncHandler = Handler(Looper.getMainLooper())
-        var lipSyncCount = 0
-        val runnable = object : Runnable {
-            override fun run() {
-                if (lipSyncCount < 10) {
-                    ivAvatar.scaleY = if (lipSyncCount % 2 == 0) 1.02f else 1.0f
-                    lipSyncCount++
-                    lipSyncHandler.postDelayed(this, 150)
-                } else {
-                    ivAvatar.scaleY = 1.0f
-                    updateMayaState(MayaState.IDLE)
-                }
-            }
-        }
-        lipSyncHandler.post(runnable)
     }
 
     private fun startIdleAnimation() {
-        val idle = AnimationUtils.loadAnimation(this, android.R.anim.fade_in)
-        idle.duration = 2000
-        idle.repeatMode = Animation.REVERSE
-        idle.repeatCount = Animation.INFINITE
+        val idle = AnimationUtils.loadAnimation(this, R.anim.idle_float)
         ivAvatar.startAnimation(idle)
     }
 
+    private fun simulateLipSync() {
+        ivAvatar.animate().scaleY(1.1f).setDuration(100).withEndAction {
+            ivAvatar.animate().scaleY(1.0f).setDuration(100).start()
+        }.start()
+    }
+
     private fun startPulseAnimation(view: View) {
-        val pulse = AnimationUtils.loadAnimation(this, android.R.anim.fade_in)
-        pulse.duration = 500
-        pulse.repeatMode = Animation.REVERSE
-        pulse.repeatCount = 5
+        val pulse = AnimationUtils.loadAnimation(this, R.anim.pulse)
         view.startAnimation(pulse)
     }
 }
