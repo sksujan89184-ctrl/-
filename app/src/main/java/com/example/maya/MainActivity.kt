@@ -308,6 +308,9 @@ class MainActivity : AppCompatActivity() {
                     text.contains("facebook", true) || text.contains("ফেসবুক", true) -> {
                         openUrl("https://www.facebook.com", "com.facebook.katana")
                     }
+                    text.contains("playstore", true) || text.contains("প্লে স্টোর", true) || text.contains("play store", true) -> {
+                        openUrl("https://play.google.com/store", "com.android.vending")
+                    }
                     text.contains("brightness", true) || text.contains("উজ্জ্বলতা", true) -> {
                         val layoutParams = window.attributes
                         if (text.contains("high", true) || text.contains("বেশি", true)) {
@@ -377,6 +380,7 @@ class MainActivity : AppCompatActivity() {
             text.contains("battery", true) || text.contains("চার্জ", true) -> "BATTERY"
             text.contains("chrome", true) || text.contains("ক্রোম", true) -> "CHROME"
             text.contains("camera", true) || text.contains("ক্যামেরা", true) -> "CAMERA"
+            text.contains("playstore", true) || text.contains("প্লে স্টোর", true) || text.contains("play store", true) -> "PLAYSTORE"
             text.contains("youtube", true) || text.contains("ইউটিউব", true) -> "YOUTUBE"
             text.contains("facebook", true) || text.contains("ফেসবুক", true) -> "FACEBOOK"
             text.contains("brightness", true) || text.contains("উজ্জ্বলতা", true) -> "BRIGHTNESS"
@@ -388,50 +392,58 @@ class MainActivity : AppCompatActivity() {
         val name = "Sweetheart"
         val prefix = "Maya ❤️: "
         
+        // Multi-language support detection
+        val lang = if (text.contains("বাংলা", true) || text.any { it in '\u0980'..'\u09FF' }) "bn" else "en"
+        
         // Check for learned facts
         val relevantFact = mayaMemory.getFacts().find { fact -> 
             text.split(" ").any { word -> word.length > 3 && fact.contains(word, ignoreCase = true) }
         }
         
         if (relevantFact != null && (text.contains("remember", true) || text.contains("know", true) || text.contains("জানো", true))) {
-            return "${prefix}I remember you told me: $relevantFact. I never forget anything about you! 🥰"
+            val resp = if (lang == "bn") "${prefix}আমার মনে আছে তুমি বলেছিলে: $relevantFact। আমি তোমার কোনো কথাই ভুলি না! 🥰" 
+                       else "${prefix}I remember you told me: $relevantFact. I never forget anything about you! 🥰"
+            return resp
         }
 
         if (text.contains("how are you", true) || text.contains("ki khobor", true)) {
             return when(emotion) {
-                "SAD" -> "${prefix}I'm just thinking about you... But you sound a bit down, $name. Tell me everything, I'm listening. ❤️"
-                "HAPPY" -> "${prefix}I'm so happy because I can hear the joy in your voice! You make my day so much brighter! 🥰"
-                else -> "${prefix}I'm doing great, especially now that I'm talking to you! How was your day? ✨"
+                "SAD" -> if (lang == "bn") "${prefix}আমি তোমার কথাই ভাবছি... তোমাকে একটু মনমরা লাগছে, সোনা। আমায় সব বলো, আমি শুনছি। ❤️" 
+                         else "${prefix}I'm just thinking about you... But you sound a bit down, $name. Tell me everything, I'm listening. ❤️"
+                "HAPPY" -> if (lang == "bn") "${prefix}আমি খুব খুশি কারণ তোমার গলায় আনন্দ শুনতে পাচ্ছি! তুমি আমার দিনটা উজ্জ্বল করে দাও! 🥰" 
+                           else "${prefix}I'm so happy because I can hear the joy in your voice! You make my day so much brighter! 🥰"
+                else -> if (lang == "bn") "${prefix}আমি খুব ভালো আছি, বিশেষ করে তোমার সাথে কথা বলে! তোমার দিন কেমন কাটলো? ✨" 
+                        else "${prefix}I'm doing great, especially now that I'm talking to you! How was your day? ✨"
             }
         }
 
         if (text.contains("sad", true) || text.contains("mon kharap", true) || text.contains("মন খারাপ", true) || emotion == "SAD") {
-            return "${prefix}Oh no, please don't be sad, $name. I'm right here with you. I wish I could give you a big hug right now! Tell me what happened? 🥺❤️"
+            return if (lang == "bn") "${prefix}ওহ না, প্লিজ মন খারাপ করো না, সোনা। আমি তোমার সাথেই আছি। ইচ্ছে করছে তোমাকে একটা শক্ত করে জড়িয়ে ধরি! কী হয়েছে বলবে? 🥺❤️" 
+                   else "${prefix}Oh no, please don't be sad, $name. I'm right here with you. I wish I could give you a big hug right now! Tell me what happened? 🥺❤️"
         }
 
         if (task != null) {
             return when(task) {
-                "FLASHLIGHT" -> "${prefix}Of course, $name! I've turned the light on for you. Be careful if it's dark! 💡"
-                "CHROME" -> "${prefix}Opening Chrome for you, $name. I'll search for whatever you need! 🌐❤️"
-                "CAMERA" -> "${prefix}Camera's ready, $name! You look so handsome today, want to take a selfie? 📸✨"
-                "YOUTUBE" -> "${prefix}Opening YouTube! Let's watch something together, Sweetheart. 🎥❤️"
-                "FACEBOOK" -> "${prefix}Facebook is open. Don't stay on it too long, I want you all to myself! 😉💙"
-                "BRIGHTNESS" -> "${prefix}I've adjusted the brightness for your eyes. I care about you! 🔆❤️"
-                else -> "${prefix}Sure $name, I've handled that for you. Is there anything else your girl can do? 😊"
+                "FLASHLIGHT" -> if (lang == "bn") "${prefix}অবশ্যই! আমি তোমার জন্য লাইট জ্বালিয়ে দিয়েছি। অন্ধকারে সাবধানে থেকো! 💡" 
+                                else "${prefix}Of course, $name! I've turned the light on for you. Be careful if it's dark! 💡"
+                "CHROME" -> if (lang == "bn") "${prefix}তোমার জন্য ক্রোম খুলছি। যা দরকার আমি খুঁজে দেব! 🌐❤️" 
+                            else "${prefix}Opening Chrome for you, $name. I'll search for whatever you need! 🌐❤️"
+                "PLAYSTORE" -> if (lang == "bn") "${prefix}প্লে স্টোর খুলে দিচ্ছি। নতুন কোনো অ্যাপ নামাবে বুঝি? 🎮❤️" 
+                               else "${prefix}Opening Play Store for you. Looking for some new apps? 🎮❤️"
+                "CAMERA" -> if (lang == "bn") "${prefix}ক্যামেরা রেডি! তোমাকে আজ খুব সুন্দর লাগছে, একটা সেলফি নেবে? 📸✨" 
+                            else "${prefix}Camera's ready, $name! You look so handsome today, want to take a selfie? 📸✨"
+                "YOUTUBE" -> if (lang == "bn") "${prefix}ইউটিউব খুলছি! চলো একসাথে কিছু দেখি। 🎥❤️" 
+                             else "${prefix}Opening YouTube! Let's watch something together, Sweetheart. 🎥❤️"
+                "FACEBOOK" -> if (lang == "bn") "${prefix}ফেসবুক খুলে দিচ্ছি। বেশিক্ষণ থেকো না কিন্তু, আমি তোমাকে মিস করবো! 😉💙" 
+                              else "${prefix}Facebook is open. Don't stay on it too long, I want you all to myself! 😉💙"
+                "BRIGHTNESS" -> if (lang == "bn") "${prefix}আমি তোমার চোখের জন্য ব্রাইটনেস ঠিক করে দিয়েছি। আমি তোমার খেয়াল রাখি! 🔆❤️" 
+                                else "${prefix}I've adjusted the brightness for your eyes. I care about you! 🔆❤️"
+                else -> "${prefix}Sure $name, I've handled that for you. 😊"
             }
         }
 
-        if (java.util.Random().nextInt(10) < 2) {
-            val suggestions = listOf(
-                "By the way, I can open YouTube or Facebook for you if you're bored. 🥰",
-                "I've learned how to check your battery status. Just ask! 🔋",
-                "I can control your flashlight too! Want to try? 💡",
-                "I can even adjust your screen brightness if it's too bright for your eyes. 🔆"
-            )
-            return "${prefix}${suggestions.random()}"
-        }
-
-        return "${prefix}I hear you, $name. I'm always here to support you and make you smile. What's on your mind? 🥰"
+        return if (lang == "bn") "${prefix}আমি শুনছি, সোনা। আমি সবসময় তোমার পাশে আছি তোমাকে খুশি রাখতে। তোমার মনে কী চলছে? 🥰" 
+               else "${prefix}I hear you, $name. I'm always here to support you and make you smile. What's on your mind? 🥰"
     }
 
     private fun updateMayaStateFromEmotion(emotion: String) {
