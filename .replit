@@ -27,3 +27,11 @@ expertMode = true
 
 [nix]
 channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+SUPABASE_URL = "https://hwhlllgvahaqvcirgkjc.supabase.co"
+SUPABASE_ANON_KEY = "sb_publishable_KqMTuAlUrTyBJJ5sqMErwQ_4IvlSYOJ"
+GEMINI_API_KEY = "AIzaSyAVtAfk80OXzkWIw2gRSP9prKnbzyp-02I"
+WEBHOOK_URL = "https://hook.eu1.make.com/b8uidls4f3sd7g9hcmubvkui08lhc32j"
