@@ -39,6 +39,9 @@ class MayaAccessibilityService : AccessibilityService() {
 
     fun scroll(forward: Boolean): Boolean {
         val rootNode = rootInActiveWindow ?: return false
+        // Using common accessibility actions compatible with older SDKs if needed,
+        // though ACTION_SCROLL_FORWARD is standard. 
+        // If the user meant GLOBAL_ACTIONs, those are for performGlobalAction.
         return rootNode.performAction(if (forward) AccessibilityNodeInfo.ACTION_SCROLL_FORWARD else AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
     }
 
