@@ -1,4 +1,4 @@
-modules = ["python-3.12", "bash", "java-17"]
+modules = ["python-3.12", "bash", "java-graalvm22.3"]
 [workflows]
 runButton = "Project"
 
