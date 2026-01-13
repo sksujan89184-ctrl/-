@@ -1,5 +1,6 @@
 package com.example.maya
 
+import android.accessibilityservice.AccessibilityService
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -450,32 +451,32 @@ class MainActivity : AppCompatActivity() {
         when (state) {
             MayaState.IDLE -> {
                 ivAvatar.alpha = 1.0f
-                ivAvatar.setImageResource(R.drawable.maya_normal)
+                ivAvatar.setImageResource(R.drawable.myra_placeholder)
             }
             MayaState.THINKING -> {
                 ivAvatar.animate().scaleX(1.05f).scaleY(1.05f).setDuration(500).start()
-                ivAvatar.setImageResource(R.drawable.maya_thinking)
+                ivAvatar.setImageResource(R.drawable.myra_placeholder)
             }
             MayaState.SPEAKING -> {
                 ivAvatar.animate().rotation(2f).setDuration(200).start()
-                ivAvatar.setImageResource(R.drawable.maya_speaking)
+                ivAvatar.setImageResource(R.drawable.myra_placeholder)
             }
             MayaState.HAPPY -> {
                 ivAvatar.animate().scaleX(1.1f).scaleY(1.1f).setDuration(300).start()
-                ivAvatar.setImageResource(R.drawable.maya_happy)
+                ivAvatar.setImageResource(R.drawable.myra_placeholder)
             }
             MayaState.SAD -> {
                 ivAvatar.animate().alpha(0.7f).translationY(10f).setDuration(500).start()
-                ivAvatar.setImageResource(R.drawable.maya_sad)
+                ivAvatar.setImageResource(R.drawable.myra_placeholder)
             }
             MayaState.EXCITED -> {
                 ivAvatar.animate().scaleX(1.2f).scaleY(1.2f).rotation(5f).setDuration(300).start()
-                ivAvatar.setImageResource(R.drawable.maya_excited)
+                ivAvatar.setImageResource(R.drawable.myra_placeholder)
             }
             MayaState.SLEEP -> {
                 tvStatus.text = "Maya: Zzz..."
                 ivAvatar.animate().alpha(0.4f).scaleX(0.9f).scaleY(0.9f).setDuration(1000).start()
-                ivAvatar.setImageResource(R.drawable.maya_sleep)
+                ivAvatar.setImageResource(R.drawable.myra_placeholder)
             }
         }
     }
