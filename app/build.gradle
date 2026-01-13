@@ -13,10 +13,16 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
+
+        buildConfigField "String", "SUPABASE_URL", "\"${System.env.SUPABASE_URL ?: ""}\""
+        buildConfigField "String", "SUPABASE_ANON_KEY", "\"${System.env.SUPABASE_ANON_KEY ?: ""}\""
+        buildConfigField "String", "GEMINI_API_KEY", "\"${System.env.GEMINI_API_KEY ?: ""}\""
+        buildConfigField "String", "WEBHOOK_URL", "\"${System.env.WEBHOOK_URL ?: ""}\""
     }
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 
     packagingOptions {

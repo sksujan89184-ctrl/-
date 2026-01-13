@@ -12,10 +12,10 @@ import javax.crypto.spec.SecretKeySpec
 
 object WebhookHelper {
     private val client = OkHttpClient()
-    private val WEBHOOK_URL = System.getenv("WEBHOOK_URL") ?: "https://your-backend-api.com/maya-webhook"
+    private val WEBHOOK_URL = BuildConfig.WEBHOOK_URL.ifBlank { "https://your-backend-api.com/maya-webhook" }
 
-    private val SUPABASE_URL = System.getenv("SUPABASE_URL") ?: ""
-    private val SUPABASE_ANON_KEY = System.getenv("SUPABASE_ANON_KEY") ?: ""
+    private val SUPABASE_URL = BuildConfig.SUPABASE_URL
+    private val SUPABASE_ANON_KEY = BuildConfig.SUPABASE_ANON_KEY
 
     fun sendToSupabase(table: String, data: JSONObject) {
         if (SUPABASE_URL.isBlank()) return
