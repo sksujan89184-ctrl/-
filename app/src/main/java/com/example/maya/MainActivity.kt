@@ -17,8 +17,15 @@ import android.os.CountDownTimer
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 
+import android.content.Context
 import org.json.JSONObject
 import com.example.maya.crew.MayaAgent
+import com.example.maya.MayaMemory
+import com.example.maya.ShakeDetector
+import com.example.maya.WebhookHelper
+import com.example.maya.SettingsActivity
+import com.example.maya.MayaAccessibilityService
+import com.example.maya.PersonaManager
 
 class MainActivity : AppCompatActivity() {
     
