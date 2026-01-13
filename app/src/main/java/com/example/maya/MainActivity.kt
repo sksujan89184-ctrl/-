@@ -45,7 +45,9 @@ class MainActivity : AppCompatActivity() {
     private val REQUIRED_PERMISSIONS = arrayOf(
         Manifest.permission.RECORD_AUDIO,
         Manifest.permission.SYSTEM_ALERT_WINDOW,
-        Manifest.permission.CAMERA
+        Manifest.permission.CAMERA,
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
     private val PERMISSION_REQUEST_CODE = 123
 
@@ -124,6 +126,8 @@ class MainActivity : AppCompatActivity() {
             updateMayaState(MayaState.SPEAKING)
             tvStatus.text = "Maya ❤️: I'm listening, Sweetheart..."
             startPulseAnimation(btnVoice)
+            // Trigger TTS greeting
+            TTSHelper.speak("I'm here, Sweetheart. You look wonderful today!", this)
         }
 
         findViewById<EditText>(R.id.et_input).setOnEditorActionListener { v, _, _ ->
@@ -172,6 +176,9 @@ class MainActivity : AppCompatActivity() {
         }
         if (missingPermissions.isNotEmpty()) {
             ActivityCompat.requestPermissions(this, missingPermissions.toTypedArray(), PERMISSION_REQUEST_CODE)
+        } else {
+            // Permissions already granted, start services
+            startService(Intent(this, WakeWordService::class.java))
         }
     }
 
@@ -180,6 +187,9 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.any { it != PackageManager.PERMISSION_GRANTED }) {
                 Toast.makeText(this, "Permissions are required for Maya to work properly", Toast.LENGTH_LONG).show()
+            } else {
+                // All permissions granted, start services
+                startService(Intent(this, WakeWordService::class.java))
             }
         }
     }
