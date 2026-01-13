@@ -1,4 +1,4 @@
-modules = ["python-3.12", "bash"]
+modules = ["python-3.12", "bash", "nodejs-20"]
 [workflows]
 runButton = "Project"
 
@@ -24,6 +24,7 @@ args = "bash run.sh"
 
 [agent]
 expertMode = true
+integrations = ["javascript_gemini_ai_integrations:2.0.0"]
 
 [nix]
 channel = "stable-25_05"

@@ -272,15 +272,15 @@ class MainActivity : AppCompatActivity() {
                         startActivity(panelIntent)
                         tvStatus.text = "Maya: Opening WiFi settings for you."
                     }
-                    text.contains("torch", true) || text.contains("flashlight", true) || text.contains("লাইট", true) -> {
+                    text.contains("flashlight", true) || text.contains("লাইট", true) || text.contains("torch", true) -> {
                         try {
                             val cameraManager = getSystemService(android.content.Context.CAMERA_SERVICE) as android.hardware.camera2.CameraManager
                             val cameraId = cameraManager.cameraIdList[0]
-                            val isTorchOn = text.contains("on", true) || text.contains("চালু", true)
+                            val isTorchOn = text.contains("on", true) || text.contains("চালু", true) || !text.contains("off", true)
                             cameraManager.setTorchMode(cameraId, isTorchOn)
-                            tvStatus.text = if (isTorchOn) "Maya: Flashlight is now ON, Sweetheart." else "Maya: Flashlight is now OFF."
+                            tvStatus.text = if (isTorchOn) "Maya ❤️: Flashlight is now ON, Sweetheart." else "Maya ❤️: Flashlight is now OFF."
                         } catch (e: Exception) {
-                            tvStatus.text = "Maya: I couldn't control the flashlight: ${e.message}"
+                            tvStatus.text = "Maya ❤️: I couldn't control the flashlight: ${e.message}"
                         }
                     }
                     text.contains("volume", true) || text.contains("সাউন্ড", true) -> {
