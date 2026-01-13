@@ -2,7 +2,9 @@ package com.example.maya
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import org.json.JSONArray
+import org.json.JSONObject
 
 class MayaMemory(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("maya_memory", Context.MODE_PRIVATE)
