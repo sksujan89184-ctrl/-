@@ -212,7 +212,9 @@ class MainActivity : AppCompatActivity() {
         if (text.contains("remember", true) || text.contains("মনে রাখো", true)) {
             val fact = text.substringAfter("remember").substringAfter("মনে রাখো").trim()
             mayaMemory.saveFact(fact)
-            tvStatus.text = "Maya ❤️: I've remembered that for you, Sweetheart."
+            val response = "Maya ❤️: I've remembered that for you, Sweetheart."
+            tvStatus.text = response
+            TTSHelper.speak(response, this)
             return
         }
 
@@ -222,6 +224,7 @@ class MainActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             val response = generateResponse(text, emotion, task)
             tvStatus.text = response
+            TTSHelper.speak(response, this)
             
             mayaMemory.saveMessage(text, response)
             
