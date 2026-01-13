@@ -239,6 +239,17 @@ class MainActivity : AppCompatActivity() {
                     text.contains("facebook", true) || text.contains("ফেসবুক", true) -> {
                         openUrl("https://www.facebook.com", "com.facebook.katana")
                     }
+                    text.contains("brightness", true) || text.contains("উজ্জ্বলতা", true) -> {
+                        val layoutParams = window.attributes
+                        if (text.contains("high", true) || text.contains("বেশি", true)) {
+                            layoutParams.screenBrightness = 1.0f
+                        } else if (text.contains("low", true) || text.contains("কম", true)) {
+                            layoutParams.screenBrightness = 0.1f
+                        } else {
+                            layoutParams.screenBrightness = 0.5f
+                        }
+                        window.attributes = layoutParams
+                    }
                 }
             }
         }, 1000)
@@ -289,6 +300,15 @@ class MainActivity : AppCompatActivity() {
         val name = "Sweetheart"
         val prefix = "Maya ❤️: "
         
+        // Check for learned facts
+        val relevantFact = mayaMemory.getFacts().find { fact -> 
+            text.split(" ").any { word -> word.length > 3 && fact.contains(word, ignoreCase = true) }
+        }
+        
+        if (relevantFact != null && (text.contains("remember", true) || text.contains("know", true) || text.contains("জানো", true))) {
+            return "${prefix}I remember you told me: $relevantFact. I never forget anything about you! 🥰"
+        }
+
         if (text.contains("how are you", true) || text.contains("ki khobor", true)) {
             return when(emotion) {
                 "SAD" -> "${prefix}I'm just thinking about you... But you sound a bit down, $name. Tell me everything, I'm listening. ❤️"
