@@ -1,4 +1,4 @@
-modules = ["java-graalvm22.3"]
+modules = ["python-3.12", "bash"]
 [workflows]
 runButton = "Project"
 
@@ -15,12 +15,15 @@ args = "Project Info"
 name = "Project Info"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "./run.sh"
-
 [workflows.workflow.metadata]
 outputType = "console"
 
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash run.sh"
+
 [agent]
 expertMode = true
+
+[nix]
+channel = "stable-25_05"
