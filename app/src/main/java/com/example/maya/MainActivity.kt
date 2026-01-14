@@ -238,12 +238,20 @@ class MainActivity : AppCompatActivity() {
         updateMayaState(MayaState.THINKING)
         tvStatus.text = "Maya ❤️: thinking..."
         
+        // Language detection for current interaction
+        val currentLang = when {
+            text.contains("বাংলা", true) || text.any { it in '\u0980'..'\u09FF' } -> "bn"
+            text.any { it in '\u0600'..'\u06FF' } -> "ur"
+            text.any { it in '\u0900'..'\u097F' } -> "hi"
+            else -> "en"
+        }
+
         if (text.contains("remember", true) || text.contains("মনে রাখো", true)) {
             val fact = text.substringAfter("remember").substringAfter("মনে রাখো").trim()
             mayaMemory.saveFact(fact)
-            val response = "Maya ❤️: I've remembered that for you, Sweetheart."
+            val response = if (currentLang == "bn") "Maya ❤️: আমি এটা মনে রেখেছি, সোনা।" else "Maya ❤️: I've remembered that for you, Sweetheart."
             tvStatus.text = response
-            TTSHelper.getInstance(this).speak(response)
+            TTSHelper.getInstance(this).speak(response, currentLang)
             return
         }
 
@@ -256,7 +264,7 @@ class MainActivity : AppCompatActivity() {
             
             // Text reply only by default, TTS only if explicitly asked or via voice button
             if (isVoiceRequest(text)) {
-                TTSHelper.getInstance(this@MainActivity).speak(response, lang)
+                TTSHelper.getInstance(this@MainActivity).speak(response, currentLang)
             }
             
             mayaMemory.saveMessage(text, response)
