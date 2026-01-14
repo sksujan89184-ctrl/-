@@ -55,6 +55,10 @@ class TTSHelper private constructor(context: Context) : TextToSpeech.OnInitListe
         }
     }
 
+    fun isSpeaking(): Boolean {
+        return tts?.isSpeaking ?: false
+    }
+
     fun destroy() {
         tts?.stop()
         tts?.shutdown()

@@ -11,7 +11,7 @@ object MayaAI {
 
     fun generateResponse(prompt: String, context: String, callback: (String) -> Unit) {
         val apiKey = BuildConfig.GEMINI_API_KEY
-        val baseUrl = BuildConfig.GEMINI_BASE_URL
+        val baseUrl = "https://generativelanguage.googleapis.com"
 
         if (apiKey.isBlank() || baseUrl.isBlank()) {
             callback("I'm feeling a bit disconnected, Sweetheart. Please check my AI settings! ❤️")
