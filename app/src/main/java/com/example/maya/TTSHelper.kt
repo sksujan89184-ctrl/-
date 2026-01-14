@@ -50,7 +50,8 @@ class TTSHelper private constructor(context: Context) : TextToSpeech.OnInitListe
     fun speak(text: String, lang: String = "en") {
         if (isReady) {
             setLanguage(lang)
-            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+            val params = android.os.Bundle()
+            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, params, "MayaTTS")
         }
     }
 
