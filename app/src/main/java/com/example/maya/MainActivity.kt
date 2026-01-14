@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -24,8 +25,10 @@ enum class MayaState { IDLE, THINKING, SPEAKING, HAPPY, SAD, EXCITED, SLEEP }
 class MainActivity : AppCompatActivity() {
     private lateinit var tvStatus: TextView
     private lateinit var ivAvatar: ImageView
+    private lateinit var vLighting: View
     private lateinit var btnChat: ImageButton
     private lateinit var btnVoice: ImageButton
+    private lateinit var etInput: EditText
     private lateinit var mayaMemory: MayaMemory
     private var sleepTimer: CountDownTimer? = null
 
@@ -39,19 +42,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        tvStatus = findViewById(R.id.tvStatus)
+        tvStatus = findViewById(R.id.tv_status)
         ivAvatar = findViewById(R.id.ivAvatar)
-        btnChat = findViewById(R.id.btnChat)
-        btnVoice = findViewById(R.id.btnVoice)
+        vLighting = findViewById(R.id.v_lighting_effect)
+        btnChat = findViewById(R.id.btn_attach)
+        btnVoice = findViewById(R.id.btn_voice)
+        etInput = findViewById(R.id.et_input)
         mayaMemory = MayaMemory(this)
 
         updateMayaState(MayaState.IDLE)
         checkPermissions()
 
-        btnChat.setOnClickListener {
-            startPulseAnimation(it)
-            // Open Chat UI - Simplified for this logic update
-            Toast.makeText(this, "Opening heart-to-heart chat...", Toast.LENGTH_SHORT).show()
+        etInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEND) {
+                val text = etInput.text.toString()
+                if (text.isNotBlank()) {
+                    handleUserInput(text)
+                    etInput.text.clear()
+                }
+                true
+            } else false
         }
 
         btnVoice.setOnClickListener {
@@ -108,6 +118,7 @@ class MainActivity : AppCompatActivity() {
                 tvStatus.text = cleanResponse
                 if (isVoiceRequest(cleanResponse) || btnVoice.isSelected) {
                     TTSHelper.getInstance(this).speak(cleanResponse, currentLang)
+                    startLightingPulse()
                 }
                 mayaMemory.saveMessage("User", text)
                 mayaMemory.saveMessage("Maya", cleanResponse)
@@ -136,7 +147,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             "CLICK" -> service?.clickElementByText(param)
-            "SCROLL" -> service?.scroll(param.uppercase() == "FORWARD" || param.uppercase() == "DOWN" || param.uppercase() == "UP" == false)
+            "SCROLL" -> service?.scroll(param.uppercase() == "FORWARD" || param.uppercase() == "DOWN")
             "TYPE" -> service?.inputText(param)
             "TOGGLE" -> if (param.uppercase() == "FLASHLIGHT") {
                 try {
@@ -209,6 +220,15 @@ class MainActivity : AppCompatActivity() {
     private fun startIdleAnimation() {
         val idle = AnimationUtils.loadAnimation(this, R.anim.idle_float)
         ivAvatar.startAnimation(idle)
+    }
+
+    private fun startLightingPulse() {
+        vLighting.animate().alpha(1.0f).setDuration(500).withEndAction {
+            vLighting.animate().alpha(0.3f).setDuration(500).withEndAction {
+                if (TTSHelper.getInstance(this).isSpeaking()) startLightingPulse()
+                else vLighting.animate().alpha(0f).setDuration(500).start()
+            }.start()
+        }.start()
     }
 
     private fun simulateLipSync() {

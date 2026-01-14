@@ -7,14 +7,23 @@
     android:background="#0D0D0D"
     tools:context=".MainActivity">
 
-    <!-- Full Screen Anime Avatar with better framing -->
-    <ImageView
-        android:id="@+id/iv_maya_avatar"
+    <!-- Dynamic Lighting Effect Layer -->
+    <View
+        android:id="@+id/v_lighting_effect"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:src="@drawable/myra_placeholder"
-        android:scaleType="centerCrop"
-        android:adjustViewBounds="true"
+        android:layout_height="match_parent"
+        android:background="@drawable/lighting_gradient"
+        android:alpha="0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <!-- 3D Avatar (replacing anime image) -->
+    <ImageView
+        android:id="@+id/ivAvatar"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/maya_3d_avatar"
+        android:scaleType="fitCenter"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/bottom_card"
         app:layout_constraintStart_toStartOf="parent"
