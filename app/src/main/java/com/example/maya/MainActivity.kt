@@ -269,8 +269,16 @@ class MainActivity : AppCompatActivity() {
             
             mayaMemory.saveMessage(text, response)
             
-            if (task != null || text.contains("search", true) || text.contains("analyze", true)) {
-                searchAgent.executeTask(text)
+            // Call Gemini-powered Agent for smart response if not a simple system task
+            if (task == null && !isVoiceRequest(text)) {
+                searchAgent.executeTask(text) { aiResponse ->
+                    runOnUiThread {
+                        tvStatus.text = aiResponse
+                        mayaMemory.saveMessage("Maya AI", aiResponse)
+                    }
+                }
+            } else if (task != null || text.contains("search", true) || text.contains("analyze", true)) {
+                searchAgent.executeTask(text) { _ -> }
             }
 
             val logData = JSONObject()

@@ -13,8 +13,7 @@ class MayaAgent(
     val role: String,
     val goal: String
 ) {
-    fun executeTask(taskDescription: String) {
-        // Log task start to Webhook
+    fun executeTask(taskDescription: String, callback: (String) -> Unit) {
         val startLog = JSONObject().apply {
             put("agent", name)
             put("role", role)
@@ -23,27 +22,26 @@ class MayaAgent(
         }
         WebhookHelper.sendAction("agent_progress", startLog) { _, _ -> }
 
-        // Simulate Gemini-1.5-flash processing
-        // In a real implementation, this would call the Gemini API via a helper
-        println("$name is working on: $taskDescription")
-
-        // Simulate DuckDuckGo Search if task involves searching
-        if (taskDescription.contains("search", true)) {
-            simulateDuckDuckGoSearch(taskDescription)
+        // Actually call Gemini API via Webhook (Make.com handles the AI logic)
+        val payload = JSONObject().apply {
+            put("task", taskDescription)
+            put("agent_name", name)
+            put("agent_role", role)
         }
-
-        // Simulate Multi-Agent Collaboration
-        if (taskDescription.contains("complex", true)) {
-            delegateToSubAgent(taskDescription)
+        
+        WebhookHelper.sendAction("ai_chat", payload) { success, response ->
+            if (success && response != null) {
+                try {
+                    val json = JSONObject(response)
+                    val aiResponse = json.optString("reply", "I'm thinking, Sweetheart...")
+                    callback(aiResponse)
+                } catch (e: Exception) {
+                    callback("I'm here, Sweetheart. How can I help? ❤️")
+                }
+            } else {
+                callback("I'm having a bit of trouble connecting to my brain, but I'm still here for you! ❤️")
+            }
         }
-
-        // Log completion
-        val endLog = JSONObject().apply {
-            put("agent", name)
-            put("status", "completed")
-            put("result", "Processed task successfully using Gemini-1.5-flash")
-        }
-        WebhookHelper.sendAction("agent_progress", endLog) { _, _ -> }
     }
 
     private fun delegateToSubAgent(task: String) {
