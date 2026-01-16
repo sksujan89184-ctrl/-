@@ -6,7 +6,7 @@ if [ -x "$(pwd)/gradlew" ] && [ "$0" != "./gradlew" ]; then
 fi
 if [ -f "gradle/wrapper/gradle-wrapper.jar" ]; then
   # Prefer the wrapper if present
-  java -jar gradle/wrapper/gradle-wrapper.jar "$@"
+  "/home/user/-/jdk-17.0.17+10/bin/java" -jar gradle/wrapper/gradle-wrapper.jar "$@"
 else
   if command -v gradle >/dev/null 2>&1; then
     gradle "$@"

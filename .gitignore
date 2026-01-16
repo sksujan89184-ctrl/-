@@ -1,9 +1,5 @@
-/.gradle
-/build
-**/build
-/local.properties
-/*.keystore
-/*.jks
-/.idea
-.DS_Store
-**/*.iml
+*.tar.gz
+jdk-17.0.17+10/
+local.properties
+.gradle/
+build/
