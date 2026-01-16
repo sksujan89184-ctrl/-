@@ -17,10 +17,10 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/myra_placeholder"
+        android:icon="@drawable/maya_3d_avatar"
         android:label="Maya AI Agent"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         tools:targetApi="31">
 
         <service

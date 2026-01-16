@@ -40,45 +40,50 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        try {
+            setContentView(R.layout.activity_main)
 
-        tvStatus = findViewById(R.id.tv_status)
-        ivAvatar = findViewById(R.id.ivAvatar)
-        vLighting = findViewById(R.id.v_lighting_effect)
-        btnChat = findViewById(R.id.btn_attach)
-        btnVoice = findViewById(R.id.btn_voice)
-        etInput = findViewById(R.id.et_input)
-        mayaMemory = MayaMemory(this)
+            tvStatus = findViewById(R.id.tv_status)
+            ivAvatar = findViewById(R.id.ivAvatar)
+            vLighting = findViewById(R.id.v_lighting_effect)
+            btnChat = findViewById(R.id.btn_attach)
+            btnVoice = findViewById(R.id.btn_voice)
+            etInput = findViewById(R.id.et_input)
+            mayaMemory = MayaMemory(this)
 
-        updateMayaState(MayaState.IDLE)
-        
-        // Handle trigger from WakeWordService
-        if (intent.getBooleanExtra("trigger_voice", false)) {
-            btnVoice.isSelected = true
-            tvStatus.text = "Maya ❤️: I'm listening, my love..."
-        }
-
-        requestPermissions()
-
-        etInput.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEND) {
-                val text = etInput.text.toString()
-                if (text.isNotBlank()) {
-                    handleUserInput(text)
-                    etInput.text.clear()
-                }
-                true
-            } else false
-        }
-
-        btnVoice.setOnClickListener {
-            startPulseAnimation(it)
-            it.isSelected = !it.isSelected
-            if (it.isSelected) {
+            updateMayaState(MayaState.IDLE)
+            
+            // Handle trigger from WakeWordService
+            if (intent.getBooleanExtra("trigger_voice", false)) {
+                btnVoice.isSelected = true
                 tvStatus.text = "Maya ❤️: I'm listening, my love..."
-            } else {
-                tvStatus.text = "Maya ❤️: I'm here for you."
             }
+
+            requestPermissions()
+
+            etInput.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEND) {
+                    val text = etInput.text.toString()
+                    if (text.isNotBlank()) {
+                        handleUserInput(text)
+                        etInput.text.clear()
+                    }
+                    true
+                } else false
+            }
+
+            btnVoice.setOnClickListener {
+                startPulseAnimation(it)
+                it.isSelected = !it.isSelected
+                if (it.isSelected) {
+                    tvStatus.text = "Maya ❤️: I'm listening, my love..."
+                } else {
+                    tvStatus.text = "Maya ❤️: I'm here for you."
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Startup error: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 
