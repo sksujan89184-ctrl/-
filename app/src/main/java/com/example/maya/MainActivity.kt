@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         mayaMemory = MayaMemory(this)
 
         updateMayaState(MayaState.IDLE)
-        checkPermissions()
+        requestPermissions()
 
         etInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEND) {
@@ -128,6 +128,21 @@ class MainActivity : AppCompatActivity() {
                 mayaMemory.saveMessage("Maya", cleanResponse)
                 updateMayaState(MayaState.HAPPY)
                 simulateLipSync()
+            }
+        }
+    }
+
+    private fun requestPermissions() {
+        val missingPermissions = requiredPermissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+        if (missingPermissions.isNotEmpty()) {
+            ActivityCompat.requestPermissions(this, missingPermissions.toTypedArray(), PERMISSION_REQUEST_CODE)
+        } else {
+            try {
+                startService(Intent(this, WakeWordService::class.java))
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
