@@ -51,6 +51,13 @@ class MainActivity : AppCompatActivity() {
         mayaMemory = MayaMemory(this)
 
         updateMayaState(MayaState.IDLE)
+        
+        // Handle trigger from WakeWordService
+        if (intent.getBooleanExtra("trigger_voice", false)) {
+            btnVoice.isSelected = true
+            tvStatus.text = "Maya ❤️: I'm listening, my love..."
+        }
+
         requestPermissions()
 
         etInput.setOnEditorActionListener { _, actionId, _ ->
