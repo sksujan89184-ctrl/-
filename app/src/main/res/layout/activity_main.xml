@@ -10,12 +10,14 @@
     <!-- Dynamic Lighting Effect Layer -->
     <View
         android:id="@+id/v_lighting_effect"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@drawable/lighting_gradient"
         android:alpha="0"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- 3D Avatar (replacing anime image) -->
     <ImageView
@@ -67,7 +69,9 @@
         app:cardElevation="10dp"
         android:layout_margin="15dp"
         app:cardBackgroundColor="#CC1A1A1A"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
